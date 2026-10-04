@@ -41,8 +41,8 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 |---|---|---|---|
 | M1 | Databricks foundation | bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded | runs every command |
 | M2 | Silver pipeline | sales-domain tables (about 12) typed with expectations; other tables follow later | first silver table + its expectations |
-| M3 | Gold (dbt) | `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_orders`, `fct_sales_lines`, marts; reconciliation tests pass; docs generated | first staging model + `fct_orders` |
-| M4 | Analysis on gold | prototype analyses rebuilt on gold, runs in MLflow, figures in `reports/figures` | one analysis end to end |
+| M3 | Gold (dbt) | `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_orders`, `fct_sales_lines`; reconciliation and channel tests pass; docs generated; `gold_dbt` task green on Databricks | `fct_orders` + its tests (staging was templated; Jake reads `stg_sales_order_header` and `sources.yml`) |
+| M4 | Analysis on gold | prototype analyses rebuilt on gold, runs in MLflow, figures in `reports/figures`; marts built as each analysis needs them (e.g. monthly product units, customer features) | one analysis end to end |
 | M5 | Extensions | margin (cost history joined by effective date), supplier quality | first effective-date join |
 | M6 | Presentation | dashboard, GitHub Actions (ruff, pytest, dbt parse), README rewrite, repo public | README narrative |
 
