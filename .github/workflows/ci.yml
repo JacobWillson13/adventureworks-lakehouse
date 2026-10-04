@@ -1,0 +1,48 @@
+# Checks that need no workspace and no data: lint, unit and local Spark tests, dbt project parse.
+# Tests that need the private data export skip themselves when data/raw is absent.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+
+  dbt-parse:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dbt
+    env:
+      # Parse never connects; the profile only needs values to render.
+      DBT_HOST: example.cloud.databricks.com
+      DBT_HTTP_PATH: /sql/1.0/warehouses/placeholder
+      DBT_ACCESS_TOKEN: placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "dbt-databricks>=1.10,<2"
+      - run: dbt parse --profiles-dir .
