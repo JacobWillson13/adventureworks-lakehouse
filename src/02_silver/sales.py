@@ -4,35 +4,40 @@
 # Bronze is fully overwritten on every run, so it is not an append-only source; materialized views
 # (recomputed from source on each update) are the right dataset type, not streaming tables.
 #
-# Casting uses try_* functions: a value that cannot be parsed becomes NULL instead of crashing the
-# update, and the expectations below then decide what happens to that row.
+# Typing lives in awlake.silver.typed_columns (importable because the pipeline's root_path is src/):
+# it builds the select list from config/aw_schema.json with try_* casts, so a value that cannot be
+# parsed becomes NULL instead of crashing the update, and the expectations below decide what happens
+# to that row.
+#
+# Severity reflects business impact:
+#   fail -> the table is unusable without it; stop the update and investigate
+#   drop -> the row cannot be used for analysis; remove it, but record how many were removed
+#   warn -> the row is usable but suspicious; keep it and record the violation
+# Every table fails on a missing primary key and drops rows whose required timestamps did not parse.
+# Money and quantity checks drop on transactional rows (an order line with a negative price would
+# corrupt revenue) and warn on reference rows (dropping a product or territory would orphan the
+# orders that point at it). Cross-table checks belong to the dbt tests in gold, not here.
 from pyspark import pipelines as dp
-from pyspark.sql import functions as F
+
+from awlake.silver import PERSON_NAME_COLUMNS, typed_columns
 
 # Set in the pipeline configuration (resources/aw_silver.pipeline.yml), so this file has no
 # hard-coded catalog and works unchanged in any workspace.
 BRONZE = spark.conf.get("bronze_schema")  # noqa: F821  (spark is provided by the pipeline runtime)
 
 
-def ts(col: str):
-    """Bronze timestamps look like '2011-05-31 00:00:00' or '2014-09-12 11:15:07.263000000'.
-    Spark keeps microseconds, so trim to 26 characters before parsing."""
-    return F.try_to_timestamp(F.substring(F.col(col), 1, 26))
+def bronze(table: str, schema_table: str, include: list[str] | None = None):
+    return spark.read.table(f"{BRONZE}.{table}").select(*typed_columns(schema_table, include))  # noqa: F821
 
 
-def guid(col: str):
-    """Some tables wrap GUIDs in {braces}; normalize to bare upper-case."""
-    return F.upper(F.regexp_replace(F.col(col), r"[{}]", ""))
-
+# ---------------------------------------------------------------------------------------------------
+# Orders
+# ---------------------------------------------------------------------------------------------------
 
 @dp.materialized_view(
     name="sales_order_header",
     comment="One row per sales order, typed from bronze. Revenue = sub_total (excludes tax and freight).",
 )
-# Severity reflects business impact:
-#   fail -> the table is unusable without it; stop the update and investigate
-#   drop -> the row cannot be used for analysis; remove it, but record how many were removed
-#   warn -> the row is usable but suspicious; keep it and record the violation
 @dp.expect_or_fail("order_id_present", "sales_order_id IS NOT NULL")
 @dp.expect_or_drop("order_date_parsed", "order_date IS NOT NULL")
 @dp.expect_or_drop("subtotal_non_negative", "sub_total >= 0")
@@ -40,33 +45,178 @@ def guid(col: str):
 @dp.expect("due_on_or_after_order", "due_date >= order_date")
 @dp.expect("status_in_range", "status BETWEEN 1 AND 6")
 def sales_order_header():
-    b = spark.read.table(f"{BRONZE}.sales_order_header")  # noqa: F821
-    return b.select(
-        F.col("SalesOrderID").try_cast("int").alias("sales_order_id"),
-        F.col("RevisionNumber").try_cast("tinyint").alias("revision_number"),
-        ts("OrderDate").alias("order_date"),
-        ts("DueDate").alias("due_date"),
-        ts("ShipDate").alias("ship_date"),
-        F.col("Status").try_cast("tinyint").alias("status"),
-        (F.col("OnlineOrderFlag") == "1").alias("online_order_flag"),
-        F.col("SalesOrderNumber").alias("sales_order_number"),
-        F.col("PurchaseOrderNumber").alias("purchase_order_number"),
-        F.col("AccountNumber").alias("account_number"),
-        F.col("CustomerID").try_cast("int").alias("customer_id"),
-        F.col("SalesPersonID").try_cast("int").alias("sales_person_id"),
-        F.col("TerritoryID").try_cast("int").alias("territory_id"),
-        F.col("BillToAddressID").try_cast("int").alias("bill_to_address_id"),
-        F.col("ShipToAddressID").try_cast("int").alias("ship_to_address_id"),
-        F.col("ShipMethodID").try_cast("int").alias("ship_method_id"),
-        F.col("CreditCardID").try_cast("int").alias("credit_card_id"),
-        F.col("CurrencyRateID").try_cast("int").alias("currency_rate_id"),
-        F.col("SubTotal").try_cast("decimal(19,4)").alias("sub_total"),
-        F.col("TaxAmt").try_cast("decimal(19,4)").alias("tax_amt"),
-        F.col("Freight").try_cast("decimal(19,4)").alias("freight"),
-        F.col("TotalDue").try_cast("decimal(19,4)").alias("total_due"),
-        F.col("Comment").alias("comment"),
-        guid("rowguid").alias("rowguid"),
-        ts("ModifiedDate").alias("modified_date"),
-        F.col("_source_file"),
-        F.col("_ingested_at"),
-    )
+    return bronze("sales_order_header", "SalesOrderHeader")
+
+
+@dp.materialized_view(
+    name="sales_order_detail",
+    comment="One row per order line. line_total sums to the header's sub_total.",
+)
+@dp.expect_or_fail("pk_present", "sales_order_id IS NOT NULL AND sales_order_detail_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Lines are the revenue and units facts, so bad amounts are dropped rather than summed. Quantity must be
+# positive (the source's own CHECK constraint): a zero-unit line is not a sale.
+@dp.expect_or_drop("order_qty_positive", "order_qty > 0")
+@dp.expect_or_drop("unit_price_non_negative", "unit_price >= 0")
+@dp.expect_or_drop("line_total_non_negative", "line_total >= 0")
+# The discount is already baked into line_total, which is checked above; an odd rate alone is a warning.
+@dp.expect("discount_in_range", "unit_price_discount BETWEEN 0 AND 1")
+def sales_order_detail():
+    return bronze("sales_order_detail", "SalesOrderDetail")
+
+
+@dp.materialized_view(
+    name="sales_order_header_sales_reason",
+    comment="Bridge: the reasons a customer gave for an order (online orders only).",
+)
+@dp.expect_or_fail("pk_present", "sales_order_id IS NOT NULL AND sales_reason_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def sales_order_header_sales_reason():
+    return bronze("sales_order_header_sales_reason", "SalesOrderHeaderSalesReason")
+
+
+@dp.materialized_view(name="sales_reason", comment="Lookup of purchase reasons (price, promotion, review, ...).")
+@dp.expect_or_fail("pk_present", "sales_reason_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def sales_reason():
+    return bronze("sales_reason", "SalesReason")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Customers, stores, people, sales staff, territories
+# ---------------------------------------------------------------------------------------------------
+
+@dp.materialized_view(
+    name="customer",
+    comment="One row per customer: person_id set for individuals, store_id set for resellers.",
+)
+@dp.expect_or_fail("pk_present", "customer_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def customer():
+    return bronze("customer", "Customer")
+
+
+@dp.materialized_view(name="store", comment="Reseller stores. Survey XML (demographics) stays in bronze for now.")
+@dp.expect_or_fail("pk_present", "business_entity_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def store():
+    return bronze("store", "Store")
+
+
+@dp.materialized_view(
+    name="person",
+    comment="People: key and name columns only. Contact details and survey XML stay in bronze.",
+)
+@dp.expect_or_fail("pk_present", "business_entity_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def person():
+    return bronze("person", "Person", PERSON_NAME_COLUMNS)
+
+
+@dp.materialized_view(name="sales_person", comment="Sales staff with quota, bonus and commission.")
+@dp.expect_or_fail("pk_present", "business_entity_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Reference rows: orders point at sales people, so odd compensation figures warn instead of dropping.
+@dp.expect("sales_quota_non_negative", "sales_quota IS NULL OR sales_quota >= 0")
+@dp.expect("bonus_non_negative", "bonus >= 0")
+@dp.expect("commission_pct_non_negative", "commission_pct >= 0")
+@dp.expect("sales_ytd_non_negative", "sales_ytd >= 0")
+@dp.expect("sales_last_year_non_negative", "sales_last_year >= 0")
+def sales_person():
+    return bronze("sales_person", "SalesPerson")
+
+
+@dp.materialized_view(
+    name="sales_territory",
+    comment="Sales territories. The YTD figures are source snapshots; gold recomputes sales from orders.",
+)
+@dp.expect_or_fail("pk_present", "territory_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Reference rows, and the snapshot figures are not used for revenue: warn only.
+@dp.expect("sales_ytd_non_negative", "sales_ytd >= 0")
+@dp.expect("sales_last_year_non_negative", "sales_last_year >= 0")
+@dp.expect("cost_ytd_non_negative", "cost_ytd >= 0")
+@dp.expect("cost_last_year_non_negative", "cost_last_year >= 0")
+def sales_territory():
+    return bronze("sales_territory", "SalesTerritory")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Products, prices and costs
+# ---------------------------------------------------------------------------------------------------
+
+@dp.materialized_view(name="product", comment="Products with current list price and standard cost.")
+@dp.expect_or_fail("pk_present", "product_id IS NOT NULL")
+@dp.expect_or_drop("sell_start_date_parsed", "sell_start_date IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Reference rows: order lines point at products, so odd prices or stock levels warn instead of dropping.
+# Prices over time come from the history tables, which drop bad rows.
+@dp.expect("list_price_non_negative", "list_price >= 0")
+@dp.expect("standard_cost_non_negative", "standard_cost >= 0")
+@dp.expect("safety_stock_level_non_negative", "safety_stock_level >= 0")
+@dp.expect("reorder_point_non_negative", "reorder_point >= 0")
+def product():
+    return bronze("product", "Product")
+
+
+@dp.materialized_view(name="product_subcategory", comment="Product subcategories (37), each in one category.")
+@dp.expect_or_fail("pk_present", "product_subcategory_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def product_subcategory():
+    return bronze("product_subcategory", "ProductSubcategory")
+
+
+@dp.materialized_view(name="product_category", comment="Product categories: Bikes, Components, Clothing, Accessories.")
+@dp.expect_or_fail("pk_present", "product_category_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def product_category():
+    return bronze("product_category", "ProductCategory")
+
+
+@dp.materialized_view(
+    name="product_list_price_history",
+    comment="List price per product over time; end_date NULL means current. Joined by effective date in gold.",
+)
+@dp.expect_or_fail("pk_present", "product_id IS NOT NULL AND start_date IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# The price feeds effective-date joins directly; a wrong price is worse than a missing one, which gold's
+# join-coverage tests will surface.
+@dp.expect_or_drop("list_price_non_negative", "list_price >= 0")
+def product_list_price_history():
+    return bronze("product_list_price_history", "ProductListPriceHistory")
+
+
+@dp.materialized_view(
+    name="product_cost_history",
+    comment="Standard cost per product over time; end_date NULL means current. Feeds margin over time.",
+)
+@dp.expect_or_fail("pk_present", "product_id IS NOT NULL AND start_date IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Same reasoning as list price: a negative cost would silently inflate margin, so the row is dropped.
+@dp.expect_or_drop("standard_cost_non_negative", "standard_cost >= 0")
+def product_cost_history():
+    return bronze("product_cost_history", "ProductCostHistory")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Promotions
+# ---------------------------------------------------------------------------------------------------
+
+@dp.materialized_view(name="special_offer", comment="Promotions and volume discounts. ID 1 = 'No Discount'.")
+@dp.expect_or_fail("pk_present", "special_offer_id IS NOT NULL")
+@dp.expect_or_drop("start_date_parsed", "start_date IS NOT NULL")
+@dp.expect_or_drop("end_date_parsed", "end_date IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+# Reference rows: every order line points at an offer, so odd values warn instead of dropping.
+@dp.expect("discount_pct_in_range", "discount_pct BETWEEN 0 AND 1")
+@dp.expect("min_qty_non_negative", "min_qty >= 0")
+@dp.expect("max_qty_non_negative", "max_qty IS NULL OR max_qty >= 0")
+def special_offer():
+    return bronze("special_offer", "SpecialOffer")
+
+
+@dp.materialized_view(name="special_offer_product", comment="Bridge: which products each offer applies to.")
+@dp.expect_or_fail("pk_present", "special_offer_id IS NOT NULL AND product_id IS NOT NULL")
+@dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")
+def special_offer_product():
+    return bronze("special_offer_product", "SpecialOfferProduct")

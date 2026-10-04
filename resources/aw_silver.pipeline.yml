@@ -7,6 +7,10 @@ resources:
       schema: aw_silver              # target schema for every dataset the pipeline defines
       serverless: true
       channel: CURRENT
+      # Added to sys.path when the pipeline runs its Python sources, so sales.py can `import awlake`.
+      # Bundle field `root_path` on the pipeline resource ("added to sys.path when executing Python
+      # sources during pipeline execution"); the CLI resolves it relative to this file, like library paths.
+      root_path: ../src
       libraries:
         - file:
             path: ../src/02_silver/sales.py

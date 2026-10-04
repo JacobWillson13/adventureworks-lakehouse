@@ -28,7 +28,7 @@ This gives `data/raw/*.csv` (72 files, tab-delimited, no header row). Column nam
 - Cloud sessions cannot reach the Databricks workspace. Write code, tests and bundle config; Jake deploys and
   runs on Databricks and reports results back.
 - Local checks available in a session: `python -m pytest -q`, `python scripts/profile_raw.py`,
-  `python scripts/bronze_dryrun.py` (needs Java 17+ and pyspark).
+  `python scripts/bronze_dryrun.py`, `python scripts/silver_dryrun.py` (both need Java 17+ and pyspark).
 
 ## Conventions
 
