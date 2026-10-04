@@ -1,37 +1,70 @@
 # AdventureWorks Lakehouse
 
-End-to-end Databricks lakehouse on the Microsoft AdventureWorks database:
-a bronze/silver/gold medallion pipeline over all 72 source files, a sales star
-schema, and analysis on top (revenue, customer segmentation, forecasting).
+[![ci](https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml)
 
-## Project status
+End-to-end Databricks lakehouse on the Microsoft AdventureWorks sample database. A raw export of 72 messy CSV
+files goes through a bronze/silver/gold medallion pipeline into a tested dbt star schema, then into five
+analyses tracked in MLflow and a five-page AI/BI dashboard. Everything is deployed as one Databricks Asset Bundle.
 
-Last updated: 2026-10-04. Milestones, done-when criteria and settled decisions live in [docs/PLAN.md](docs/PLAN.md).
+Every number below comes with the check that backs it: row counts verified at ingestion, data quality
+expectations in silver, reconciliation tests in gold, and backtests for the forecasts.
 
-- **M1 Databricks foundation: done.** Bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded.
-- **M2 Silver pipeline: done.** 16 materialized views in `aw_silver` (Lakeflow Declarative Pipeline), all expectations
-  pass. M5 adds 4 purchasing tables (`src/02_silver/purchasing.py`).
-- **M3 Gold (dbt): done.** `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_sales_lines` and
-  `fct_orders` with reconciliation and channel tests; `gold_dbt` green on Databricks (22 models, 77 tests).
-- **M4 Analysis on gold + M5 Extensions: in progress** (one branch and PR). Analysis marts, three analyses
-  (sales exploration, customer segmentation, forecasting) with MLflow tracking, the `aw_analysis` job; silver
-  purchasing tables, margin over time (cost by effective date) and supplier quality.
+## Architecture
 
-### Next
+```
+data/raw (72 CSVs, no headers, several format defects)
+  -> bronze   PySpark job         all columns STRING + lineage; row counts checked against expected; audit table
+  -> silver   Lakeflow pipeline   20 typed, conformed tables; expectations are the data quality record
+  -> gold     dbt (Databricks)    staging views, 4 dims, 4 facts, 6 analysis marts; 148 tests incl. reconciliations
+  -> analysis notebooks + MLflow  sales exploration, segmentation, forecasting, margin, supplier quality
+  -> present  AI/BI dashboard     Overview, Margin, Customers, Suppliers, Demand
+```
 
-1. `aw_medallion` and `aw_analysis` green on Databricks with the M4 and M5 models and notebooks
-2. M6: presentation
+Three bundle jobs and one dashboard: `aw_medallion` (bronze, then silver, then `dbt build` on a SQL warehouse),
+`aw_analysis` (notebooks 10 to 14 on serverless) and the `AdventureWorks Sales` dashboard. Transformation and
+analysis logic lives in `src/awlake` as plain functions, so it is unit-tested on local Spark; notebooks and
+pipeline files stay thin. Design decisions and milestones: [docs/PLAN.md](docs/PLAN.md).
 
-### Open questions
+## Findings
 
-None open. Resolved:
+Analysis window: 2011-05-31 to 2014-05-31 (June 2014 is a truncated extract). Revenue = SubTotal, excluding tax
+and freight.
 
-- **Is `ProductModelorg.csv` a copy of `ProductModel.csv`?** Yes, in content. `cmp` reports the files differ, but
-  both hold the same 128 rows with identical values. The only difference is encoding inside the XML columns:
-  `ProductModel.csv` writes line breaks as the two characters `\n`, while `ProductModelorg.csv` has real line
-  breaks inside quoted fields (6 `CatalogDescription` and 9 `Instructions` values). `product_model_org` stays in
-  bronze only. Neither it nor `product_model` is in silver; `ProductModel` is the copy to promote if an analysis
-  needs it.
+- **Two businesses in one.** 30,526 orders and $109.8M revenue. Online orders all come from 18,484 individuals,
+  reseller orders all from 635 stores; the channels never overlap. Resellers carry about three quarters of revenue
+  with roughly 12% of orders, and arrive in monthly batches (some months empty).
+- **July 2013 structural break.** Accessories and clothing launched online, so online order counts jump from
+  that month on. Any trend or forecast that ignores the break is wrong on one side of it.
+- **Segmentation (K-means, k = 3, individuals only).** Bike + gear buyers are about 43% of customers and 84% of
+  online revenue; accessory and clothing buyers are about half of customers but 2% of revenue; bike-only buyers
+  are the rest. Stores are profiled separately as a different population.
+- **Forecasting does not beat naive.** Monthly units per product, rolling-origin backtest: the best model (ETS)
+  has a WAPE of 49.0% against 49.4% for the naive forecast. Forecasting online and reseller separately is worse
+  (53.8%). With monthly reseller batches, demand at this grain is mostly noise; the honest result is the baseline.
+- **Margin.** Cost history is joined to each order line by effective date. Monthly gross margin ranges from
+  -21.4% (April 2012, a Mountain-100 clearance) to +41.5%. Reseller margin is close to zero overall (0.6%).
+- **Supplier quality.** All purchase orders (2011-04 to 2014-09). The worst vendors reject about 5% of received
+  units, mostly as whole deliveries refused rather than partial rejections. Lead time cannot be measured: there
+  is no receipt date and due date = order date + 14 days on 99.4% of lines.
+
+| | |
+|---|---|
+| ![Monthly trends](reports/figures/sales_monthly_trends.png) | ![Segments](reports/figures/segmentation_segments.png) |
+| ![Forecast backtest](reports/figures/forecast_backtest_wape.png) | ![Margin over time](reports/figures/margin_over_time.png) |
+
+All figures: [reports/figures](reports/figures).
+
+## Evidence
+
+- **Bronze:** 71 tables loaded with exact expected row counts, 1 malformed file excluded and documented;
+  `aw_bronze.ingest_audit` records every load.
+- **Silver:** expectations on keys, foreign keys and NOT NULL columns for all 20 tables, passing.
+- **Gold:** 148 dbt tests. Order revenue reconciles to line revenue within 0.01 per order; every online order
+  belongs to an individual and every reseller order to a store; no order line matches two cost periods (64 lines
+  of discontinued products match none and carry their last cost forward, reported as a warning that fails if it
+  grows); marts reconcile to the facts.
+- **Analysis:** clustering and forecasting runs in MLflow with parameters, metrics, models and figures.
+- **CI:** ruff, pytest (unit and local Spark tests) and `dbt parse` on every push and pull request.
 
 ## Raw data quirks handled in bronze
 
@@ -62,11 +95,13 @@ src/00_setup/  schemas + landing volume
 src/01_bronze/ raw files -> Delta, all STRING, with lineage columns
 src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline): sales.py, purchasing.py
 src/awlake/analysis/  analysis logic (sales, segmentation, forecasting, margin, supplier), plots, MLflow
+dashboards/    AI/BI dashboard definition (exported JSON, deployed by the bundle)
 dbt/           gold: staging views, star schema (dims + facts), analysis marts and tests
 notebooks/     00 local prototype (record); 10 to 14 analyses on gold, run by the aw_analysis job
 reports/figures/  figures from the analysis notebooks
 resources/     Databricks job definitions (Asset Bundle)
 tests/         pytest, incl. local Spark tests of each raw-format quirk
+.github/       CI: ruff, pytest, dbt parse
 ```
 
 ## Run it
@@ -80,6 +115,7 @@ a Databricks workspace (Free Edition works).
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+ruff check .                               # lint
 python -m pytest -q                        # unit + local Spark tests
 python scripts/profile_raw.py              # structural check of every raw file
 python scripts/bronze_dryrun.py            # full bronze read locally, row counts checked
@@ -93,6 +129,7 @@ databricks bundle run aw_setup             # once: schemas + landing volume
 scripts/upload_raw.sh                      # data/raw -> /Volumes/workspace/aw_raw/landing
 databricks bundle run aw_medallion         # bronze -> silver -> gold_dbt
 databricks bundle run aw_analysis          # notebooks 10 to 14 on gold; MLflow experiment aw_analysis
+databricks bundle summary                  # dashboard and job URLs
 ```
 
 ### Everything locally (no workspace)

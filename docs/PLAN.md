@@ -44,7 +44,7 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 | M3 | Gold (dbt) | `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_orders`, `fct_sales_lines`; reconciliation and channel tests pass; docs generated; `gold_dbt` task green on Databricks | Templated, including `fct_orders` (learning mode waived to save time; Jake reviews `fct_orders`, `stg_sales_order_header` and `sources.yml`) |
 | M4 | Analysis on gold | prototype analyses rebuilt on gold, runs in MLflow, figures in `reports/figures`; marts built as each analysis needs them (e.g. monthly product units, customer features) | Templated (learning mode waived to save time; M4 and M5 share one branch and PR, `m4-m5-analysis-extensions`) |
 | M5 | Extensions | margin (cost history joined by effective date), supplier quality | Templated, including the first effective-date join (learning mode waived; same branch and PR as M4) |
-| M6 | Presentation | dashboard, GitHub Actions (ruff, pytest, dbt parse), README rewrite, repo public | README narrative |
+| M6 | Presentation | dashboard, GitHub Actions (ruff, pytest, dbt parse), README rewrite, repo public | Dashboard Overview page built in the UI; other pages, CI and README templated (Jake reviews) |
 
 ## Known data facts (from profiling and the prototype)
 
