@@ -1,0 +1,14 @@
+resources:
+  pipelines:
+    # Silver layer: typed, conformed tables with data quality expectations.
+    aw_silver:
+      name: aw_silver
+      catalog: ${var.catalog}
+      schema: aw_silver              # target schema for every dataset the pipeline defines
+      serverless: true
+      channel: CURRENT
+      libraries:
+        - file:
+            path: ../src/02_silver/sales.py
+      configuration:
+        bronze_schema: ${var.catalog}.aw_bronze   # read in code via spark.conf.get("bronze_schema")

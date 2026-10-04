@@ -10,7 +10,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
 
-    # Medallion pipeline. Silver and gold tasks get added here as they are built.
+    # Medallion pipeline: bronze (job task) -> silver (Lakeflow pipeline). dbt gold gets added next.
     aw_medallion:
       name: aw_medallion
       max_concurrent_runs: 1
@@ -20,3 +20,9 @@ resources:
             notebook_path: ../src/01_bronze/01_ingest_bronze.py
             base_parameters:
               catalog: ${var.catalog}
+
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.aw_silver.id}
