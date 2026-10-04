@@ -24,3 +24,6 @@ venv/
 # databricks
 .databricks/
 .pytest_cache/
+
+# exports
+*.html
