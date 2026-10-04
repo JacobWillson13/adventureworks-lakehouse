@@ -17,7 +17,7 @@ from awlake.silver import LINEAGE, PERSON_NAME_COLUMNS, cast_column, is_skipped,
 cfg = Config(ROOT)
 RAW = ROOT / "data" / "raw"
 
-# Schema table -> columns promoted to silver (None = all). Mirrors src/02_silver/sales.py.
+# Schema table -> columns promoted to silver (None = all). Mirrors src/02_silver/sales.py and purchasing.py.
 SILVER_TABLES = {
     "SalesOrderHeader": None,
     "SalesOrderDetail": None,
@@ -35,6 +35,10 @@ SILVER_TABLES = {
     "ProductCostHistory": None,
     "SalesReason": None,
     "SalesOrderHeaderSalesReason": None,
+    "PurchaseOrderHeader": None,
+    "PurchaseOrderDetail": None,
+    "Vendor": None,
+    "ProductVendor": None,
 }
 
 
