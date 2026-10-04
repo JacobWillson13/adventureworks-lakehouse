@@ -66,6 +66,7 @@ The pipeline as it runs on Databricks (Free Edition), and the dbt lineage of the
 <details>
 <summary>More: job run, silver pipeline, MLflow, other dashboard pages</summary>
 
+![dbt lineage: margin by effective-date cost join](docs/images/dbt_lineage_margin.png)
 ![aw_medallion job run](docs/images/job_run.png)
 ![Silver pipeline with expectations](docs/images/silver_pipeline.png)
 ![MLflow experiment](docs/images/mlflow_runs.png)
