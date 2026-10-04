@@ -225,9 +225,11 @@ src/01_bronze/ raw files -> Delta, all STRING, with lineage columns
 src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline): sales.py, purchasing.py
 src/awlake/analysis/  analysis logic (sales, segmentation, forecasting, margin, supplier), plots, MLflow
 dashboards/    AI/BI dashboard definition (exported JSON, deployed by the bundle)
+docs/          build plan and design decisions (PLAN.md), fct_orders spec, README images
 dbt/           gold: staging views, star schema (dims + facts), analysis marts and tests
 notebooks/     00 local prototype (record); 10 to 14 analyses on gold, run by the aw_analysis job
 reports/figures/  figures from the analysis notebooks
+reports/prototype/  figures and tables from the local prototype that validated the design
 resources/     Databricks job definitions (Asset Bundle)
 tests/         pytest, incl. local Spark tests of each raw-format quirk
 .github/       CI: ruff, pytest, dbt parse

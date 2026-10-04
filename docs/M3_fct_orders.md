@@ -1,8 +1,7 @@
-# M3: write `fct_orders`
+# `fct_orders`: design spec
 
-`fct_orders` is the order-level fact. Everything around it is already in place: staging views, the four
-dimensions, `fct_sales_lines` and their tests. This file describes what the model must contain and how to
-check it. It gives hints, not the SQL.
+`fct_orders` is the order-level fact. This spec defined what the model must contain and how to check it before
+it was written; the model is `dbt/models/marts/fct_orders.sql` and all checks below pass on Databricks.
 
 ## Where it goes
 
@@ -91,7 +90,7 @@ Expected results on the current export:
 
 ## Done when
 
-- [ ] `fct_orders.sql` written, with a header comment stating the grain and the revenue definition
-- [ ] Columns documented and tests 1 to 4 added in `_marts.yml`
-- [ ] Singular tests 5 and 6 added in `dbt/tests/`
-- [ ] `dbt build` green locally, then in the `aw_medallion` job on Databricks
+- [x] `fct_orders.sql` written, with a header comment stating the grain and the revenue definition
+- [x] Columns documented and tests 1 to 4 added in `_marts.yml`
+- [x] Singular tests 5 and 6 added in `dbt/tests/`
+- [x] `dbt build` green locally, then in the `aw_medallion` job on Databricks
