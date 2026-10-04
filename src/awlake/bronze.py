@@ -13,7 +13,6 @@ from pyspark.sql.types import StringType, StructField, StructType
 from .config import SourceSpec
 from .repair import rejoin_rows
 
-
 # Charsets Spark 4's CSV reader accepts. Anything else (e.g. windows-1252) is decoded in Python.
 SPARK_CHARSETS = {"utf-8", "us-ascii", "iso-8859-1", "utf-16", "utf-16be", "utf-16le", "utf-32"}
 
