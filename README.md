@@ -1,99 +1,118 @@
-# AdventureWorks Lakehouse
+<h1 align="center">AdventureWorks Lakehouse</h1>
 
-[![ci](https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml)
+<p align="center">
+  A medallion lakehouse on Databricks, from a broken 72-file CSV export to a tested dbt star schema,<br>
+  MLflow-tracked analyses and a five-page AI/BI dashboard. Deployed as one Asset Bundle.
+</p>
 
-End-to-end Databricks lakehouse on the Microsoft AdventureWorks sample database. A raw export of 72 messy CSV
-files goes through a bronze/silver/gold medallion pipeline into a tested dbt star schema, then into five
-analyses tracked in MLflow and a five-page AI/BI dashboard. Everything is deployed as one Databricks Asset Bundle.
+<p align="center">
+  <a href="https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/JacobWillson13/adventureworks-lakehouse/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Databricks" src="https://img.shields.io/badge/Databricks-Asset%20Bundles-FF3621?logo=databricks&logoColor=white">
+  <img alt="Lakeflow" src="https://img.shields.io/badge/Lakeflow-Declarative%20Pipelines-FF3621">
+  <img alt="dbt" src="https://img.shields.io/badge/dbt-databricks-FF694B?logo=dbt&logoColor=white">
+  <img alt="MLflow" src="https://img.shields.io/badge/MLflow-tracking-0194E2?logo=mlflow&logoColor=white">
+  <img alt="PySpark" src="https://img.shields.io/badge/PySpark-4-E25A1C?logo=apachespark&logoColor=white">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white">
+</p>
 
-Every number below comes with the check that backs it: row counts verified at ingestion, data quality
-expectations in silver, reconciliation tests in gold, and backtests for the forecasts.
+<p align="center">
+  <img src="docs/images/dashboard_overview.png" alt="AdventureWorks Sales dashboard, overview page" width="100%">
+</p>
+
+| 72 raw files | 71 bronze tables | 20 silver tables | 34 dbt models | 148 dbt tests | 5 analyses | 5 dashboard pages |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| no headers, 4 format defects | row counts verified | typed, with expectations | dims, facts, marts | incl. reconciliations | in MLflow | deployed as code |
+
+**Contents:** [Findings](#what-the-data-says) · [Architecture](#architecture) · [How it is built](#how-it-is-built) · [Evidence](#evidence) · [Design decisions](#design-decisions) · [Run it](#run-it)
+
+---
+
+## What the data says
+
+Window: 2011-05-31 to 2014-05-31 (June 2014 is a truncated extract). Revenue = SubTotal, excluding tax and freight.
+
+**1. It is two businesses that never overlap.** 30,526 orders and $109.8M. Every online order comes from one of
+18,484 individuals; every reseller order from one of 635 stores. Resellers bring about three quarters of revenue
+with 12% of the orders, in monthly batches, and some months have no batch at all.
+
+**2. July 2013 changed the online business.** Accessories and clothing launched online. Monthly online orders jump
+from about 330 to over 1,500, and new customers from about 250 to over 1,100 a month. Any trend that crosses this
+line without accounting for it is wrong on one side.
+
+<table>
+  <tr>
+    <td width="50%"><img src="reports/figures/sales_monthly_trends.png" alt="Monthly revenue and orders by channel"></td>
+    <td width="50%"><img src="reports/figures/margin_over_time.png" alt="Gross margin over time by category and channel"></td>
+  </tr>
+  <tr>
+    <td><sub>Revenue and orders by channel. Shaded months had no reseller batch; the dotted line is July 2013.</sub></td>
+    <td><sub>Gross margin from cost history joined by effective date: total, by category, by channel.</sub></td>
+  </tr>
+</table>
+
+**3. Online makes the money; resellers move the volume.** Online sells at a steady 40% gross margin. Reseller margin
+is 0.6% overall: resellers lose money on bikes, components are their only clearly profitable category, and
+April 2012 (a Mountain-100 clearance) drops to -60%. Overall margin is 11.4%.
+
+**4. Customers split into three segments.** K-means on RFM-style features (k = 3, individuals only): bike + gear
+buyers are about 43% of customers and 84% of online revenue; accessory and clothing buyers are about half of
+customers and 2% of revenue; bike-only buyers are the rest.
+
+**5. Forecasting does not beat naive, and that is the result.** Monthly units per product, rolling-origin backtest:
+the best model (ETS) reaches 49.0% WAPE against 49.4% for naive. Splitting by channel makes it worse (53.8%).
+With batch-driven reseller demand, this grain is mostly noise. Reporting the baseline honestly beats a fake win.
+
+**6. Supplier quality is a refusal problem, not an inspection problem.** Across all purchase orders (2011-04 to
+2014-09), 3.1% of received units are rejected; the worst vendors with real volume reach about 5.5%, mostly whole
+deliveries refused rather than partial rejections. Lead time cannot be measured: there is no receipt date.
+
+<table>
+  <tr>
+    <td width="50%"><img src="reports/figures/segmentation_segments.png" alt="Customer segments"></td>
+    <td width="50%"><img src="reports/figures/forecast_backtest_wape.png" alt="Forecast backtest by model"></td>
+  </tr>
+  <tr>
+    <td><sub>Segments: share of customers vs share of revenue, and recency vs value.</sub></td>
+    <td><sub>Backtest WAPE by model across products and origins. Naive is the bar to beat.</sub></td>
+  </tr>
+</table>
+
+All figures: [`reports/figures`](reports/figures).
+
+---
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    raw["data/raw<br/>72 CSVs, no headers"] --> bronze
+    subgraph job["aw_medallion job (one Asset Bundle)"]
+        bronze["Bronze<br/>PySpark job<br/>all STRING + lineage<br/>row counts checked"] --> silver["Silver<br/>Lakeflow pipeline<br/>20 typed tables<br/>expectations"]
+        silver --> gold["Gold<br/>dbt on a SQL warehouse<br/>dims, facts, marts<br/>148 tests"]
+    end
+    gold --> analysis["aw_analysis job<br/>5 notebooks<br/>MLflow tracking"]
+    gold --> dash["AI/BI dashboard<br/>5 pages, JSON in repo"]
 ```
-data/raw (72 CSVs, no headers, several format defects)
-  -> bronze   PySpark job         all columns STRING + lineage; row counts checked against expected; audit table
-  -> silver   Lakeflow pipeline   20 typed, conformed tables; expectations are the data quality record
-  -> gold     dbt (Databricks)    staging views, 4 dims, 4 facts, 6 analysis marts; 148 tests incl. reconciliations
-  -> analysis notebooks + MLflow  sales exploration, segmentation, forecasting, margin, supplier quality
-  -> present  AI/BI dashboard     Overview, Margin, Customers, Suppliers, Demand
-```
 
-Three bundle jobs and one dashboard: `aw_medallion` (bronze, then silver, then `dbt build` on a SQL warehouse),
-`aw_analysis` (notebooks 10 to 14 on serverless) and the `AdventureWorks Sales` dashboard. Transformation and
-analysis logic lives in `src/awlake` as plain functions, so it is unit-tested on local Spark; notebooks and
-pipeline files stay thin. Design decisions and milestones: [docs/PLAN.md](docs/PLAN.md).
+Everything is deployed by one Databricks Asset Bundle: two jobs, one pipeline, one dashboard, one MLflow
+experiment. Transformation and analysis logic lives in `src/awlake` as plain functions, so it is unit-tested on local
+Spark in CI; notebooks and pipeline files stay thin.
 
-## Findings
+---
 
-Analysis window: 2011-05-31 to 2014-05-31 (June 2014 is a truncated extract). Revenue = SubTotal, excluding tax
-and freight.
+## How it is built
 
-- **Two businesses in one.** 30,526 orders and $109.8M revenue. Online orders all come from 18,484 individuals,
-  reseller orders all from 635 stores; the channels never overlap. Resellers carry about three quarters of revenue
-  with roughly 12% of orders, and arrive in monthly batches (some months empty).
-- **July 2013 structural break.** Accessories and clothing launched online, so online order counts jump from
-  that month on. Any trend or forecast that ignores the break is wrong on one side of it.
-- **Segmentation (K-means, k = 3, individuals only).** Bike + gear buyers are about 43% of customers and 84% of
-  online revenue; accessory and clothing buyers are about half of customers but 2% of revenue; bike-only buyers
-  are the rest. Stores are profiled separately as a different population.
-- **Forecasting does not beat naive.** Monthly units per product, rolling-origin backtest: the best model (ETS)
-  has a WAPE of 49.0% against 49.4% for the naive forecast. Forecasting online and reseller separately is worse
-  (53.8%). With monthly reseller batches, demand at this grain is mostly noise; the honest result is the baseline.
-- **Margin.** Cost history is joined to each order line by effective date. Monthly gross margin ranges from
-  -21.4% (April 2012, a Mountain-100 clearance) to +41.5%. Reseller margin is close to zero overall (0.6%). Online sells at
-  about 40%; resellers lose money on bikes, and components are their only clearly profitable category.
-- **Supplier quality.** All purchase orders (2011-04 to 2014-09). The worst vendors reject about 5% of received
-  units, mostly as whole deliveries refused rather than partial rejections. Lead time cannot be measured: there
-  is no receipt date and due date = order date + 14 days on 99.4% of lines.
+### 1. Bronze: make a broken export loadable
 
-| | |
-|---|---|
-| ![Monthly trends](reports/figures/sales_monthly_trends.png) | ![Segments](reports/figures/segmentation_segments.png) |
-| ![Forecast backtest](reports/figures/forecast_backtest_wape.png) | ![Margin over time](reports/figures/margin_over_time.png) |
+The export has no header row, one file in cp1252, records broken by unquoted line breaks and a malformed extra
+file. Column names and types come from Microsoft's own DDL; per-file repairs live in config, not code. Every load
+is checked against expected row counts and written to an audit table, so a silent truncation fails the job.
 
-All figures: [reports/figures](reports/figures).
-
-## Screenshots
-
-The pipeline as it runs on Databricks (Free Edition), and the dbt lineage of the gold layer.
-
-![Dashboard overview](docs/images/dashboard_overview.png)
-
-![dbt lineage](docs/images/dbt_lineage.png)
+<p align="center"><img src="docs/images/job_run.png" alt="aw_medallion job run: bronze, silver, gold_dbt" width="85%"></p>
+<p align="center"><sub>The whole pipeline in one job run: bronze (5 min), silver (2.5 min), dbt gold (4 min).</sub></p>
 
 <details>
-<summary>More: job run, silver pipeline, MLflow, other dashboard pages</summary>
-
-![dbt lineage: margin by effective-date cost join](docs/images/dbt_lineage_margin.png)
-![aw_medallion job run](docs/images/job_run.png)
-![Silver pipeline with expectations](docs/images/silver_pipeline.png)
-![MLflow experiment](docs/images/mlflow_runs.png)
-![Dashboard: margin](docs/images/dashboard_margin.png)
-![Dashboard: customers](docs/images/dashboard_customers.png)
-![Dashboard: suppliers](docs/images/dashboard_suppliers.png)
-![Dashboard: demand](docs/images/dashboard_demand.png)
-
-</details>
-
-## Evidence
-
-- **Bronze:** 71 tables loaded with exact expected row counts, 1 malformed file excluded and documented;
-  `aw_bronze.ingest_audit` records every load.
-- **Silver:** expectations on keys, foreign keys and NOT NULL columns for all 20 tables, passing.
-- **Gold:** 148 dbt tests. Order revenue reconciles to line revenue within 0.01 per order; every online order
-  belongs to an individual and every reseller order to a store; no order line matches two cost periods (64 lines
-  of discontinued products match none and carry their last cost forward, reported as a warning that fails if it
-  grows); marts reconcile to the facts.
-- **Analysis:** clustering and forecasting runs in MLflow with parameters, metrics, models and figures.
-- **CI:** ruff, pytest (unit and local Spark tests) and `dbt parse` on every push and pull request.
-
-## Raw data quirks handled in bronze
-
-The source export has no header row and several format defects. Column names
-and types come from Microsoft's DDL (`config/aw_schema.json`, generated by
-`scripts/build_schema.py`); per-file fixes live in `config/ingest_overrides.json`.
+<summary>Raw data defects and how each is handled</summary>
 
 | File | Problem | Handling |
 |---|---|---|
@@ -105,10 +124,97 @@ and types come from Microsoft's DDL (`config/aw_schema.json`, generated by
 | JobCandidate_TOREMOVE | Not in DDL, malformed row | Excluded (documented) |
 | ProductModelorg | Not in DDL | Loaded with ProductModel's schema as `product_model_org` |
 
-Every bronze load is checked against `config/expected_row_counts.json`; a
-mismatch fails the job. Results append to `aw_bronze.ingest_audit`.
+</details>
 
-## Layout
+### 2. Silver: types, conformance and data quality
+
+A Lakeflow Declarative Pipeline turns 20 bronze tables into typed, snake_case materialized views. Expectations on
+keys, foreign keys and NOT NULL columns are the data quality record: each table shows its expectations and output
+counts in the pipeline graph.
+
+<p align="center"><img src="docs/images/silver_pipeline.png" alt="aw_silver pipeline graph with expectations" width="85%"></p>
+
+### 3. Gold: a tested star schema in dbt
+
+dbt builds staging views, four dimensions, four facts and six analysis marts, then 148 tests. The tests that matter
+most are business rules, not just keys: order revenue reconciles to its lines within a cent, every online order
+belongs to an individual and every reseller order to a store, and marts reconcile back to the facts.
+
+<p align="center"><img src="docs/images/dbt_lineage.png" alt="dbt lineage graph of the gold layer" width="100%"></p>
+
+The hardest model is margin. Product cost changes over time, so each order line is joined to the cost period that
+was in effect on its order date. A test guarantees no line matches two periods; 64 lines of discontinued products
+match none and carry their last known cost forward, reported as a warning that fails if the count grows.
+
+<p align="center"><img src="docs/images/dbt_lineage_margin.png" alt="dbt lineage of the margin chain" width="100%"></p>
+
+### 4. Analysis: tracked in MLflow
+
+Five notebooks run as one job on serverless compute: sales exploration, customer segmentation, forecasting, margin
+and supplier quality. Segmentation and forecasting log parameters, metrics, figures and the fitted model to an
+MLflow experiment defined in the bundle.
+
+<p align="center"><img src="docs/images/mlflow_runs.png" alt="MLflow experiment runs" width="85%"></p>
+
+### 5. Dashboard: AI/BI, versioned as code
+
+The dashboard was laid out in the Databricks UI, exported to JSON and deployed by the bundle, so the repo is the
+source of truth. Every dataset reads gold through the same analysis window.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/dashboard_margin.png" alt="Dashboard: margin"></td>
+    <td width="50%"><img src="docs/images/dashboard_customers.png" alt="Dashboard: customers"></td>
+  </tr>
+  <tr>
+    <td><sub><b>Margin.</b> Online steady near 40%; reseller near zero, negative on bikes.</sub></td>
+    <td><sub><b>Customers.</b> New-customer step in July 2013; most individuals order once or twice.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/dashboard_suppliers.png" alt="Dashboard: suppliers"></td>
+    <td width="50%"><img src="docs/images/dashboard_demand.png" alt="Dashboard: demand"></td>
+  </tr>
+  <tr>
+    <td><sub><b>Suppliers.</b> Rejection rate settles after 2013; worst vendors near 5.5%.</sub></td>
+    <td><sub><b>Demand.</b> Batch-driven reseller units vs a smooth online line.</sub></td>
+  </tr>
+</table>
+
+---
+
+## Evidence
+
+| Layer | What is checked | Result |
+|---|---|---|
+| Bronze | Row count per table vs expected; audit table | 71 tables exact, 1 malformed file excluded and documented |
+| Silver | Expectations on keys, foreign keys, NOT NULL columns | All passing on 20 tables |
+| Gold | 148 dbt tests incl. revenue reconciliation, channel rule, effective-date uniqueness | All passing; 1 tracked warning (64 carried-forward cost lines) |
+| Analysis | Rolling-origin backtest; segmentation stability | Reported as is, including a forecast that does not beat naive |
+| Code | ruff, pytest (unit + local Spark), `dbt parse` in CI | Green on every push and pull request |
+
+---
+
+## Design decisions
+
+- **Revenue = SubTotal.** Tax and freight are reconciled alongside in `fct_orders`, never mixed into revenue.
+- **One analysis window, defined once.** `dim_date.is_in_analysis_window` drops the truncated June 2014; facts keep
+  every row and every analysis filters through the same flag. Purchasing data is not truncated, so supplier quality
+  uses all of it.
+- **Channels are analysed separately.** Individuals and stores are different populations; mixing them hides both.
+- **Bronze is a job, not part of the pipeline.** The raw repairs (record rebuilds, cp1252) are beyond what Auto Loader
+  expresses; Lakeflow takes over from typed bronze tables.
+- **Logic in a package, not in notebooks.** `src/awlake` is testable with local Spark, so CI can check it without a
+  workspace or the data.
+
+## What I would do next
+
+- Incremental loads (Auto Loader into bronze, streaming tables in silver) instead of full recomputes.
+- A `prod` bundle target with a service principal, scheduled runs and failure alerts.
+- Dashboard refresh on a schedule after the medallion job, and dbt source freshness checks.
+
+---
+
+## Repository layout
 
 ```
 config/        schema (from Microsoft DDL), ingestion overrides, expected row counts
@@ -129,11 +235,8 @@ tests/         pytest, incl. local Spark tests of each raw-format quirk
 
 ## Run it
 
-Data: Microsoft AdventureWorks sample database, 72 tab-delimited CSVs in
-`data/raw/` (gitignored, never committed).
-
-Prerequisites: Python 3.12+, Java 17+ (for local Spark), Databricks CLI,
-a Databricks workspace (Free Edition works).
+Data: Microsoft AdventureWorks sample database, 72 tab-delimited CSVs in `data/raw/` (gitignored, never committed).
+Prerequisites: Python 3.12+, Java 17+ (for local Spark), Databricks CLI, a Databricks workspace (Free Edition works).
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
@@ -155,7 +258,13 @@ databricks bundle run aw_analysis          # notebooks 10 to 14 on gold; MLflow 
 databricks bundle summary                  # dashboard and job URLs
 ```
 
-### Everything locally (no workspace)
+The `gold_dbt` task runs on a SQL warehouse whose ID is the bundle variable `warehouse_id` (no default). Set it
+with `export BUNDLE_VAR_warehouse_id=<id>` as above, or pass `--var warehouse_id=<id>` to each `bundle` command.
+To find it: **SQL Warehouses** in the sidebar, open the warehouse, **Connection details** tab. The HTTP path
+looks like `/sql/1.0/warehouses/<id>`; its last segment is the ID.
+
+<details>
+<summary>Run everything locally, without a workspace</summary>
 
 Silver, gold and the analyses also run on local Spark, with a persistent catalog in `.lakehouse/` (gitignored).
 Needs `pip install "dbt-spark[session]"` (in `requirements.txt`). Run from the repo root, one command at a time:
@@ -171,12 +280,10 @@ python notebooks/14_supplier_quality.py
 mlflow ui --backend-store-uri sqlite:///.lakehouse/mlflow.db   # browse the runs
 ```
 
-The `gold_dbt` task runs on a SQL warehouse whose ID is the bundle variable `warehouse_id` (no default). Set it
-with `export BUNDLE_VAR_warehouse_id=<id>` as above, or pass `--var warehouse_id=<id>` to each `bundle` command.
-To find it: **SQL Warehouses** in the sidebar, open the warehouse, **Connection details** tab. The HTTP path
-looks like `/sql/1.0/warehouses/<id>`; its last segment is the ID.
+</details>
 
-### dbt locally
+<details>
+<summary>Run dbt from your machine against the SQL warehouse</summary>
 
 Runs the gold models and tests from your machine against the same SQL warehouse. `dbt/profiles.yml` reads the
 connection from environment variables, so no credentials are stored in the repo:
@@ -195,3 +302,5 @@ read -s DBT_ACCESS_TOKEN && export DBT_ACCESS_TOKEN   # paste the token; not ech
 cd dbt && dbt build                        # staging views, dims, facts and all tests into workspace.aw_gold
 dbt docs generate && dbt docs serve        # browse model docs and lineage
 ```
+
+</details>
