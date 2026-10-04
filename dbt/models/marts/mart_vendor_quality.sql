@@ -1,5 +1,6 @@
--- Supplier quality, one row per vendor and month over the analysis window: ordered, received and rejected
--- quantities. Roll up over months for vendor totals; rates are recomputed from the sums, never averaged.
+-- Supplier quality, one row per vendor and month over every purchase order (2011-04 to 2014-09): ordered,
+-- received and rejected quantities. Not limited to the analysis window: that window exists because the sales
+-- extract is truncated after May 2014, and the purchasing data is not. Roll up over months for vendor totals; rates are recomputed from the sums, never averaged.
 -- Lines of purchase orders whose status is 'rejected' are counted separately: there the whole delivery
 -- was refused, which is a different event from a partial rejection at receipt.
 select
@@ -25,5 +26,4 @@ inner join {{ ref('dim_date') }} as d
     on d.date_key = l.order_date_key
 inner join {{ ref('stg_vendor') }} as v
     on v.vendor_id = l.vendor_id
-where d.is_in_analysis_window
 group by l.vendor_id, v.vendor_name, v.credit_rating, v.preferred_vendor_status, v.active_flag, d.month_start_date

@@ -1,7 +1,9 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC # 14 · Supplier quality
-# MAGIC Received vs rejected quantities by vendor and over time from `mart_vendor_quality`, analysis window.
+# MAGIC Received vs rejected quantities by vendor and over time from `mart_vendor_quality`, over every
+# MAGIC purchase order (Apr 2011 to Sep 2014). The sales analysis window does not apply: it exists because the sales
+# MAGIC extract is truncated, and the purchasing data is not.
 # MAGIC Rejections split into whole deliveries refused (purchase orders with status rejected) and partial
 # MAGIC rejections at receipt. Lead time: the source has no receipt date, so only planned (due date - order date)
 # MAGIC and declared (product_vendor) lead times exist; the check below shows whether they vary enough to analyze.

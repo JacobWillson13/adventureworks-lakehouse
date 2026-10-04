@@ -1,10 +1,8 @@
--- mart_vendor_quality must carry exactly the in-window received and rejected quantities of
--- fct_purchase_lines. Returns a row if either total differs.
+-- mart_vendor_quality must carry exactly the received and rejected quantities of every purchase line in
+-- fct_purchase_lines (all purchase orders, no analysis window). Returns a row if either total differs.
 with facts as (
-    select sum(l.received_qty) as received_qty, sum(l.rejected_qty) as rejected_qty
-    from {{ ref('fct_purchase_lines') }} as l
-    inner join {{ ref('dim_date') }} as d on d.date_key = l.order_date_key
-    where d.is_in_analysis_window
+    select sum(received_qty) as received_qty, sum(rejected_qty) as rejected_qty
+    from {{ ref('fct_purchase_lines') }}
 ),
 
 mart as (

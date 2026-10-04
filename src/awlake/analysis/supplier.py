@@ -1,4 +1,5 @@
-"""Supplier quality from mart_vendor_quality (vendor x month, analysis window).
+"""Supplier quality from mart_vendor_quality (vendor x month, every purchase order through 2014-09;
+the sales analysis window does not apply).
 
 Rejection rate = rejected_qty / received_qty, recomputed from sums. Two kinds of rejection are kept
 apart: whole deliveries refused (purchase orders with status 'rejected') and partial rejections at

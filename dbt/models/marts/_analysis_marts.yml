@@ -1,7 +1,9 @@
 version: 2
 
-# Marts for the analyses (M4) and extensions (M5). Every mart covers the analysis window only
-# (dim_date.is_in_analysis_window, up to 2014-05-31); the facts it builds on keep every row.
+# Marts for the analyses (M4) and extensions (M5). The sales marts cover the analysis window only
+# (dim_date.is_in_analysis_window, up to 2014-05-31); the facts they build on keep every row.
+# mart_vendor_quality is the exception: it covers every purchase order (through 2014-09), because the window
+# exists for the truncated sales extract and the purchasing data is not truncated.
 # tests/assert_analysis_marts_reconcile_to_facts.sql checks the marts carry the facts' in-window revenue.
 
 models:
@@ -154,7 +156,7 @@ models:
   - name: fct_purchase_lines
     description: >
       One row per purchase order line: ordered, received, rejected and stocked quantities by vendor.
-      Holds every purchase order (to Sep 2014). The source has no receipt date, so lead time is only
+      Holds every purchase order (2011-04-16 to 2014-09-22). The source has no receipt date, so lead time is only
       planned (due_date - order_date) or declared (product_vendor), never observed.
     columns:
       - name: purchase_order_detail_id
@@ -179,7 +181,8 @@ models:
 
   - name: mart_vendor_quality
     description: >
-      Supplier quality by vendor and month over the analysis window: ordered, received, rejected and stocked
+      Supplier quality by vendor and month over every purchase order, 2011-04 to 2014-09 (not limited to the
+      sales analysis window; purchasing data is not truncated): ordered, received, rejected and stocked
       quantities. Rejection rate = rejected_qty / received_qty, recomputed from the sums.
       rejected_qty_on_rejected_orders separates whole refused deliveries (order status 'rejected').
     data_tests:

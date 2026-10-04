@@ -58,5 +58,6 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
   orders because those batches landed on Mar 1 and May 1.
 - 64 reseller order lines (discontinued products sold after their last cost period ended on 2013-05-29) match no
   product cost period; margin carries the latest earlier cost forward for them.
-- Purchase orders run 2011-04-16 to 2014-09-22. There is no receipt date, and due date = order date + 14 days on
+- Purchase orders run 2011-04-16 to 2014-09-22 and are not truncated, so supplier quality uses all of them (the
+  analysis window applies to sales only). There is no receipt date, and due date = order date + 14 days on
   99.4% of lines, so observed lead time cannot be measured; only the declared lead time (ProductVendor) varies.
