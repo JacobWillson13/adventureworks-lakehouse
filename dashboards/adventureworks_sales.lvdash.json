@@ -1,0 +1,536 @@
+{
+  "datasets": [
+    {
+      "displayName": "kpis",
+      "name": "2a99f965",
+      "queryLines": [
+        "-- kpis\n",
+        "select sum(o.revenue) as revenue, count(*) as orders, sum(o.revenue)/count(*) as avg_order_value, sum(o.units) as units\n",
+        "from workspace.aw_gold.fct_orders o\n",
+        "join workspace.aw_gold.dim_date d on d.date_key = o.order_date_key\n",
+        "where d.is_in_analysis_window"
+      ]
+    },
+    {
+      "displayName": "monthly_by_channel",
+      "name": "185d2a84",
+      "queryLines": [
+        "-- monthly_by_channel\n",
+        "select d.month_start_date, o.channel, sum(o.revenue) as revenue, count(*) as orders\n",
+        "from workspace.aw_gold.fct_orders o\n",
+        "join workspace.aw_gold.dim_date d on d.date_key = o.order_date_key\n",
+        "where d.is_in_analysis_window\n",
+        "group by d.month_start_date, o.channel"
+      ]
+    },
+    {
+      "displayName": "category_monthly",
+      "name": "fb14daae",
+      "queryLines": [
+        "-- category_monthly\n",
+        "select d.month_start_date, coalesce(p.category_name, 'Unassigned') as category_name, sum(l.revenue) as revenue, sum(l.order_qty) as units\n",
+        "from workspace.aw_gold.fct_sales_lines l\n",
+        "join workspace.aw_gold.dim_product p on p.product_id = l.product_id\n",
+        "join workspace.aw_gold.dim_date d on d.date_key = l.order_date_key\n",
+        "where d.is_in_analysis_window\n",
+        "group by d.month_start_date, coalesce(p.category_name, 'Unassigned')"
+      ]
+    },
+    {
+      "displayName": "territory",
+      "name": "d101f9f0",
+      "queryLines": [
+        "-- territory\n",
+        "select t.territory_group, t.territory_name, o.channel, sum(o.revenue) as revenue, count(*) as orders\n",
+        "from workspace.aw_gold.fct_orders o\n",
+        "join workspace.aw_gold.dim_territory t on t.territory_id = o.territory_id\n",
+        "join workspace.aw_gold.dim_date d on d.date_key = o.order_date_key\n",
+        "where d.is_in_analysis_window\n",
+        "group by t.territory_group, t.territory_name, o.channel"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "displayName": "Overview",
+      "layout": [
+        {
+          "position": {
+            "height": 2,
+            "width": 3,
+            "x": 0,
+            "y": 0
+          },
+          "widget": {
+            "name": "revenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2a99f965",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`revenue`)",
+                      "name": "sum(revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(revenue)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Revenue"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 6,
+            "width": 12,
+            "x": 0,
+            "y": 3
+          },
+          "widget": {
+            "name": "monthly-revenue-by-channel-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "185d2a84",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`channel`",
+                      "name": "channel"
+                    },
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`revenue`)",
+                      "name": "sum(revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "color": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": false
+                },
+                "x": {
+                  "displayName": "Month",
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "displayName": "Revenue",
+                  "fieldName": "sum(revenue)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Monthly revenue by channel"
+                }
+              },
+              "version": 3,
+              "widgetType": "line"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 6,
+            "width": 6,
+            "x": 0,
+            "y": 9
+          },
+          "widget": {
+            "name": "revenue-by-category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "fb14daae",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`category_name`",
+                      "name": "category_name"
+                    },
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`revenue`)",
+                      "name": "sum(revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "color": {
+                  "displayName": "Category",
+                  "fieldName": "category_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "x": {
+                  "displayName": "Month",
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "displayName": "Revenue",
+                  "fieldName": "sum(revenue)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Revenue by category"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 6,
+            "width": 6,
+            "x": 6,
+            "y": 9
+          },
+          "widget": {
+            "name": "revenue-by-territory-and-channel-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "d101f9f0",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`channel`",
+                      "name": "channel"
+                    },
+                    {
+                      "expression": "`territory_name`",
+                      "name": "territory_name"
+                    },
+                    {
+                      "expression": "SUM(`revenue`)",
+                      "name": "sum(revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "color": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "x": {
+                  "displayName": "Territory",
+                  "fieldName": "territory_name",
+                  "scale": {
+                    "sort": {
+                      "by": "natural-order"
+                    },
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "displayName": "Revenue",
+                  "fieldName": "sum(revenue)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Revenue by territory and channel"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 2,
+            "width": 3,
+            "x": 3,
+            "y": 0
+          },
+          "widget": {
+            "name": "337cc295",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2a99f965",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`orders`)",
+                      "name": "sum(orders)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(orders)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Orders"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 2,
+            "width": 3,
+            "x": 6,
+            "y": 0
+          },
+          "widget": {
+            "name": "748e3410",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2a99f965",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`avg_order_value`)",
+                      "name": "sum(avg_order_value)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(avg_order_value)",
+                  "format": {
+                    "abbreviation": "none",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Average Order Value"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 2,
+            "width": 3,
+            "x": 9,
+            "y": 0
+          },
+          "widget": {
+            "name": "f9827e99",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "2a99f965",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`units`)",
+                      "name": "sum(units)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(units)",
+                  "format": {
+                    "abbreviation": "none",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Units"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "height": 1,
+            "width": 12,
+            "x": 0,
+            "y": 2
+          },
+          "widget": {
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Analysis window: 2011-05-31 to 2014-05-31. June 2014 excluded. Revenue = SubTotal, excludes tax and freight.</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_TOP"
+            },
+            "name": "ffb479f4"
+          }
+        }
+      ],
+      "layoutVersion": "GRID_V1",
+      "name": "d20e1dbc",
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "applyModeEnabled": false,
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    }
+  }
+}
