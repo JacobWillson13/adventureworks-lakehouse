@@ -1,0 +1,202 @@
+version: 2
+
+# Marts for the analyses (M4) and extensions (M5). Every mart covers the analysis window only
+# (dim_date.is_in_analysis_window, up to 2014-05-31); the facts it builds on keep every row.
+# tests/assert_analysis_marts_reconcile_to_facts.sql checks the marts carry the facts' in-window revenue.
+
+models:
+  - name: mart_channel_monthly
+    description: >
+      One row per month and channel, May 2011 to May 2014, including months with no orders
+      (is_empty_month, all measures 0). Resellers order in monthly batches and skip some months.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', month_start_date, channel)"
+    columns:
+      - name: month_start_date
+        data_tests: [not_null]
+      - name: channel
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["online", "reseller"]
+      - name: revenue
+        description: Sum of order revenue (sub_total).
+        data_tests: [not_null]
+      - name: is_empty_month
+        description: True when the channel has no orders that month.
+
+  - name: mart_product_monthly
+    description: >
+      One row per product and month from the product's first sale month to May 2014. Months with no sales
+      after the first sale are 0 (is_zero_month); months before it are absent. Forecasting target: units.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', product_id, month_start_date)"
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: month_start_date
+        data_tests: [not_null]
+      - name: units
+        description: Units sold (order_qty), both channels.
+        data_tests: [not_null]
+      - name: revenue
+        description: Line revenue, both channels.
+        data_tests: [not_null]
+      - name: online_units
+        description: Units sold online (individual customers).
+      - name: reseller_units
+        description: Units sold to reseller stores.
+
+  - name: mart_customer_features
+    description: >
+      One row per individual (online) customer with an order in the analysis window. RFM-style features
+      for segmentation: recency_days, n_orders (frequency), total_revenue (monetary), plus aov,
+      units_per_order, tenure_days, n_categories and bike_share. Days are counted to 2014-06-01.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: n_orders
+        data_tests: [not_null]
+      - name: total_revenue
+        data_tests: [not_null]
+      - name: recency_days
+        description: Days from the last order to 2014-06-01 (1 for an order on the last day of the window).
+        data_tests: [not_null]
+      - name: bike_share
+        description: Share of the customer's revenue from the Bikes category, 0 to 1.
+        data_tests: [not_null]
+
+  - name: mart_store_profile
+    description: >
+      One row per reseller store with an order in the analysis window: revenue, orders, AOV, active months
+      and recency. Profiled separately from individuals, not clustered.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: store_id
+        data_tests: [not_null]
+      - name: total_revenue
+        data_tests: [not_null]
+      - name: active_months
+        description: Distinct months in which the store ordered.
+
+  - name: fct_sales_line_margin
+    description: >
+      One row per order line with the product's standard cost on the order date (effective-date join on
+      stg_product_cost_history, open-ended end_date = current). cost = order_qty * unit_standard_cost,
+      gross_margin = revenue - cost. 64 lines match no period (discontinued products sold after their last
+      cost period) and carry the latest earlier cost forward (cost_source = 'carried_forward').
+      Holds every line, including June 2014.
+    columns:
+      - name: sales_order_detail_id
+        description: Primary key. Unique proves the effective-date join did not fan out.
+        data_tests: [unique, not_null]
+      - name: order_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: unit_standard_cost
+        description: Standard cost per unit on the order date.
+        data_tests: [not_null]
+      - name: cost_source
+        description: effective (order date inside a cost period) or carried_forward (after the last period).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["effective", "carried_forward"]
+
+  - name: mart_margin_monthly
+    description: >
+      Gross margin by month, product category and channel over the analysis window. Roll up and recompute
+      margin_pct from the sums.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', month_start_date, category_name, channel)"
+    columns:
+      - name: month_start_date
+        data_tests: [not_null]
+      - name: category_name
+        data_tests: [not_null]
+      - name: gross_margin
+        data_tests: [not_null]
+      - name: margin_pct
+        description: gross_margin / revenue.
+
+  - name: fct_purchase_lines
+    description: >
+      One row per purchase order line: ordered, received, rejected and stocked quantities by vendor.
+      Holds every purchase order (to Sep 2014). The source has no receipt date, so lead time is only
+      planned (due_date - order_date) or declared (product_vendor), never observed.
+    columns:
+      - name: purchase_order_detail_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: vendor_id
+        data_tests: [not_null]
+      - name: order_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: order_status
+        description: Status of the purchase order (pending, approved, rejected, complete).
+      - name: planned_lead_time_days
+        description: due_date - order_date.
+      - name: declared_lead_time_days
+        description: The vendor's declared average lead time for this product (product_vendor).
+        data_tests: [not_null]
+
+  - name: mart_vendor_quality
+    description: >
+      Supplier quality by vendor and month over the analysis window: ordered, received, rejected and stocked
+      quantities. Rejection rate = rejected_qty / received_qty, recomputed from the sums.
+      rejected_qty_on_rejected_orders separates whole refused deliveries (order status 'rejected').
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', vendor_id, month_start_date)"
+    columns:
+      - name: vendor_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_vendor')
+                field: vendor_id
+      - name: month_start_date
+        data_tests: [not_null]
+      - name: received_qty
+        data_tests: [not_null]
+      - name: rejected_qty
+        data_tests: [not_null]
