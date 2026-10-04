@@ -1,0 +1,22 @@
+resources:
+  jobs:
+    # Run once before the first upload: creates schemas and the landing volume.
+    aw_setup:
+      name: aw_setup
+      tasks:
+        - task_key: create_schemas
+          notebook_task:
+            notebook_path: ../src/00_setup/00_create_schemas.py
+            base_parameters:
+              catalog: ${var.catalog}
+
+    # Medallion pipeline. Silver and gold tasks get added here as they are built.
+    aw_medallion:
+      name: aw_medallion
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: bronze
+          notebook_task:
+            notebook_path: ../src/01_bronze/01_ingest_bronze.py
+            base_parameters:
+              catalog: ${var.catalog}

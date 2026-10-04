@@ -1,0 +1,29 @@
+{
+  "_defaults": {
+    "sep": "\t",
+    "quote": "\"",
+    "escape": "\"",
+    "encoding": "UTF-8",
+    "multiLine": true
+  },
+  "Address": {
+    "encoding": "windows-1252",
+    "note": "Exported as cp1252, not UTF-8; accented street and city names (e.g. 'St-Régis') break under UTF-8."
+  },
+  "ProductReview": {
+    "reader": "rejoin_rows",
+    "note": "Comments column contains unquoted CRLF line breaks; 34 physical lines hold 4 records. Rows are rebuilt by starting a new record at each line matching '^<int>\\t<int>\\t'."
+  },
+  "ProductModelorg": {
+    "schema_from": "ProductModel",
+    "bronze_table": "product_model_org",
+    "note": "Not in Microsoft's DDL; same shape as ProductModel (6 columns, 128 rows). Kept in bronze, not promoted to silver."
+  },
+  "JobCandidate_TOREMOVE": {
+    "exclude": true,
+    "note": "Not in Microsoft's DDL, flagged for removal by its exporter, and has a malformed row (13 fields vs 4). JobCandidate.csv is the authoritative copy."
+  },
+  "ErrorLog": {
+    "note": "0-byte file; the table is empty in the source database too. Created as an empty bronze table with the full schema."
+  }
+}

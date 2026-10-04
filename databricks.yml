@@ -1,0 +1,17 @@
+# Databricks Asset Bundle: deploys the notebooks, src/ and config/ from this repo
+# and defines the jobs in resources/. Workspace host comes from your CLI auth profile.
+bundle:
+  name: adventureworks-lakehouse
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog that holds the aw_* schemas
+    default: workspace
+
+targets:
+  dev:
+    default: true
+    mode: development

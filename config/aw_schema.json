@@ -1,0 +1,3769 @@
+{
+  "DatabaseLog": {
+    "source_schema": "dbo",
+    "columns": [
+      {
+        "name": "DatabaseLogID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PostTime",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DatabaseUser",
+        "sql_type": "sysname",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Event",
+        "sql_type": "sysname",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Schema",
+        "sql_type": "sysname",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Object",
+        "sql_type": "sysname",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "TSQL",
+        "sql_type": "nvarchar(max)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "XmlEvent",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ErrorLog": {
+    "source_schema": "dbo",
+    "columns": [
+      {
+        "name": "ErrorLogID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ErrorTime",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "UserName",
+        "sql_type": "sysname",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ErrorNumber",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ErrorSeverity",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ErrorState",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ErrorProcedure",
+        "sql_type": "nvarchar(126)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ErrorLine",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ErrorMessage",
+        "sql_type": "nvarchar(4000)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Address": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "AddressID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AddressLine1",
+        "sql_type": "nvarchar(60)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AddressLine2",
+        "sql_type": "nvarchar(60)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "City",
+        "sql_type": "nvarchar(30)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StateProvinceID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PostalCode",
+        "sql_type": "nvarchar(15)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SpatialLocation",
+        "sql_type": "geography",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "AddressType": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "AddressTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "AWBuildVersion": {
+    "source_schema": "dbo",
+    "columns": [
+      {
+        "name": "SystemInformationID",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Database Version",
+        "sql_type": "nvarchar(25)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "VersionDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "BillOfMaterials": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "BillOfMaterialsID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductAssemblyID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ComponentID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "UnitMeasureCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "BOMLevel",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PerAssemblyQty",
+        "sql_type": "decimal(8, 2)",
+        "spark_type": "DECIMAL(8,2)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "BusinessEntity": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "BusinessEntityAddress": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AddressID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AddressTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "BusinessEntityContact": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PersonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ContactTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ContactType": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "ContactTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "CountryRegionCurrency": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "CountryRegionCode",
+        "sql_type": "nvarchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CurrencyCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "CountryRegion": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "CountryRegionCode",
+        "sql_type": "nvarchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "CreditCard": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "CreditCardID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CardType",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CardNumber",
+        "sql_type": "nvarchar(25)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ExpMonth",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ExpYear",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Culture": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "CultureID",
+        "sql_type": "nchar(6)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Currency": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "CurrencyCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "CurrencyRate": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "CurrencyRateID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CurrencyRateDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "FromCurrencyCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ToCurrencyCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AverageRate",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndOfDayRate",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Customer": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "CustomerID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PersonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "StoreID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "AccountNumber",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL('AW' + [dbo].[ufnLeadingZeros](CustomerID), '')"
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Department": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "DepartmentID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "GroupName",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Document": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "DocumentNode",
+        "sql_type": "hierarchyid",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DocumentLevel",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": true,
+        "expression": "DocumentNode.GetLevel()"
+      },
+      {
+        "name": "Title",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Owner",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "FolderFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "FileName",
+        "sql_type": "nvarchar(400)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "FileExtension",
+        "sql_type": "nvarchar(8)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Revision",
+        "sql_type": "nchar(5)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ChangeNumber",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Status",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DocumentSummary",
+        "sql_type": "nvarchar(max)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Document",
+        "sql_type": "varbinary(max)",
+        "spark_type": "BINARY",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "EmailAddress": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EmailAddressID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EmailAddress",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Employee": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "NationalIDNumber",
+        "sql_type": "nvarchar(15)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LoginID",
+        "sql_type": "nvarchar(256)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OrganizationNode",
+        "sql_type": "hierarchyid",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "OrganizationLevel",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": true,
+        "expression": "OrganizationNode.GetLevel()"
+      },
+      {
+        "name": "JobTitle",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "BirthDate",
+        "sql_type": "date",
+        "spark_type": "DATE",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MaritalStatus",
+        "sql_type": "nchar(1)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Gender",
+        "sql_type": "nchar(1)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "HireDate",
+        "sql_type": "date",
+        "spark_type": "DATE",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalariedFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "VacationHours",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SickLeaveHours",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CurrentFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "EmployeeDepartmentHistory": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DepartmentID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShiftID",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "date",
+        "spark_type": "DATE",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "date",
+        "spark_type": "DATE",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "EmployeePayHistory": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "RateChangeDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Rate",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PayFrequency",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Illustration": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "IllustrationID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Diagram",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "JobCandidate": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "JobCandidateID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Resume",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Location": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "LocationID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CostRate",
+        "sql_type": "smallmoney",
+        "spark_type": "DECIMAL(10,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Availability",
+        "sql_type": "decimal(8, 2)",
+        "spark_type": "DECIMAL(8,2)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Password": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PasswordHash",
+        "sql_type": "varchar(128)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PasswordSalt",
+        "sql_type": "varchar(10)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Person": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PersonType",
+        "sql_type": "nchar(2)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "NameStyle",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Title",
+        "sql_type": "nvarchar(8)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "FirstName",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MiddleName",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "LastName",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Suffix",
+        "sql_type": "nvarchar(10)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "EmailPromotion",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AdditionalContactInfo",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Demographics",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "PersonCreditCard": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CreditCardID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "PersonPhone": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PhoneNumber",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PhoneNumberTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "PhoneNumberType": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "PhoneNumberTypeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Product": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductNumber",
+        "sql_type": "nvarchar(25)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MakeFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "FinishedGoodsFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Color",
+        "sql_type": "nvarchar(15)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SafetyStockLevel",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReorderPoint",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StandardCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ListPrice",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Size",
+        "sql_type": "nvarchar(5)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SizeUnitMeasureCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "WeightUnitMeasureCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Weight",
+        "sql_type": "decimal(8, 2)",
+        "spark_type": "DECIMAL(8,2)",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "DaysToManufacture",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductLine",
+        "sql_type": "nchar(2)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Class",
+        "sql_type": "nchar(2)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Style",
+        "sql_type": "nchar(2)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ProductSubcategoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ProductModelID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SellStartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SellEndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "DiscontinuedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductCategory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductCategoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductCostHistory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "StandardCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductDescription": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductDescriptionID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Description",
+        "sql_type": "nvarchar(400)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductDocument": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DocumentNode",
+        "sql_type": "hierarchyid",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductInventory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LocationID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Shelf",
+        "sql_type": "nvarchar(10)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Bin",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Quantity",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductListPriceHistory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ListPrice",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductModel": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductModelID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CatalogDescription",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Instructions",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductModelIllustration": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductModelID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "IllustrationID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductModelProductDescriptionCulture": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductModelID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductDescriptionID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CultureID",
+        "sql_type": "nchar(6)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductPhoto": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductPhotoID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ThumbNailPhoto",
+        "sql_type": "varbinary(max)",
+        "spark_type": "BINARY",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ThumbnailPhotoFileName",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "LargePhoto",
+        "sql_type": "varbinary(max)",
+        "spark_type": "BINARY",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "LargePhotoFileName",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductProductPhoto": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductPhotoID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Primary",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductReview": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductReviewID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReviewerName",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReviewDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EmailAddress",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Rating",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Comments",
+        "sql_type": "nvarchar(3850)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductSubcategory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ProductSubcategoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductCategoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ProductVendor": {
+    "source_schema": "Purchasing",
+    "columns": [
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AverageLeadTime",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StandardPrice",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LastReceiptCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "LastReceiptDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "MinOrderQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MaxOrderQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OnOrderQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "UnitMeasureCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "PurchaseOrderDetail": {
+    "source_schema": "Purchasing",
+    "columns": [
+      {
+        "name": "PurchaseOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PurchaseOrderDetailID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DueDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OrderQty",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "UnitPrice",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LineTotal",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([OrderQty] * [UnitPrice], 0.00)"
+      },
+      {
+        "name": "ReceivedQty",
+        "sql_type": "decimal(8, 2)",
+        "spark_type": "DECIMAL(8,2)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "RejectedQty",
+        "sql_type": "decimal(8, 2)",
+        "spark_type": "DECIMAL(8,2)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StockedQty",
+        "sql_type": "decimal(9,2)",
+        "spark_type": "DECIMAL(9,2)",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([ReceivedQty] - [RejectedQty], 0.00)"
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "PurchaseOrderHeader": {
+    "source_schema": "Purchasing",
+    "columns": [
+      {
+        "name": "PurchaseOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "RevisionNumber",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Status",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EmployeeID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "VendorID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipMethodID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OrderDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SubTotal",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TaxAmt",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Freight",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TotalDue",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([SubTotal] + [TaxAmt] + [Freight], 0) PERSISTED NOT NULL"
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesOrderDetail": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SalesOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesOrderDetailID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CarrierTrackingNumber",
+        "sql_type": "nvarchar(25)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "OrderQty",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SpecialOfferID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "UnitPrice",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "UnitPriceDiscount",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LineTotal",
+        "sql_type": "numeric(38,6)",
+        "spark_type": "DECIMAL(38,6)",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([UnitPrice] * (1.0 - [UnitPriceDiscount]) * [OrderQty], 0.0)"
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesOrderHeader": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SalesOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "RevisionNumber",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OrderDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DueDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Status",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OnlineOrderFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesOrderNumber",
+        "sql_type": "nvarchar(25)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL(N'SO' + CONVERT(nvarchar(23), [SalesOrderID]), N'*** ERROR ***')"
+      },
+      {
+        "name": "PurchaseOrderNumber",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "AccountNumber",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "CustomerID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesPersonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "BillToAddressID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipToAddressID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipMethodID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CreditCardID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "CreditCardApprovalCode",
+        "sql_type": "varchar(15)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "CurrencyRateID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SubTotal",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TaxAmt",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Freight",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TotalDue",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([SubTotal] + [TaxAmt] + [Freight], 0)"
+      },
+      {
+        "name": "Comment",
+        "sql_type": "nvarchar(128)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesOrderHeaderSalesReason": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SalesOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesReasonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesPerson": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "SalesQuota",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Bonus",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CommissionPct",
+        "sql_type": "smallmoney",
+        "spark_type": "DECIMAL(10,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesYTD",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesLastYear",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesPersonQuotaHistory": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "QuotaDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesQuota",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesReason": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SalesReasonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReasonType",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesTaxRate": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SalesTaxRateID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StateProvinceID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TaxType",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TaxRate",
+        "sql_type": "smallmoney",
+        "spark_type": "DECIMAL(10,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesTerritory": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CountryRegionCode",
+        "sql_type": "nvarchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Group",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesYTD",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesLastYear",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CostYTD",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CostLastYear",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SalesTerritoryHistory": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ScrapReason": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "ScrapReasonID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Shift": {
+    "source_schema": "HumanResources",
+    "columns": [
+      {
+        "name": "ShiftID",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartTime",
+        "sql_type": "time",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndTime",
+        "sql_type": "time",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ShipMethod": {
+    "source_schema": "Purchasing",
+    "columns": [
+      {
+        "name": "ShipMethodID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipBase",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShipRate",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "ShoppingCartItem": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "ShoppingCartItemID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ShoppingCartID",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Quantity",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DateCreated",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SpecialOffer": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SpecialOfferID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Description",
+        "sql_type": "nvarchar(255)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "DiscountPct",
+        "sql_type": "smallmoney",
+        "spark_type": "DECIMAL(10,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Type",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Category",
+        "sql_type": "nvarchar(50)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MinQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "MaxQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "SpecialOfferProduct": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "SpecialOfferID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "StateProvince": {
+    "source_schema": "Person",
+    "columns": [
+      {
+        "name": "StateProvinceID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StateProvinceCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CountryRegionCode",
+        "sql_type": "nvarchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "IsOnlyStateProvinceFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TerritoryID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Store": {
+    "source_schema": "Sales",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "SalesPersonID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "Demographics",
+        "sql_type": "xml",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "rowguid",
+        "sql_type": "uniqueidentifier",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "TransactionHistory": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "TransactionID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReferenceOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReferenceOrderLineID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TransactionDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TransactionType",
+        "sql_type": "nchar(1)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Quantity",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ActualCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "TransactionHistoryArchive": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "TransactionID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReferenceOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ReferenceOrderLineID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TransactionDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "TransactionType",
+        "sql_type": "nchar(1)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Quantity",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ActualCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "UnitMeasure": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "UnitMeasureCode",
+        "sql_type": "nchar(3)",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "Vendor": {
+    "source_schema": "Purchasing",
+    "columns": [
+      {
+        "name": "BusinessEntityID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "AccountNumber",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "Name",
+        "sql_type": "nvarchar",
+        "spark_type": "STRING",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "CreditRating",
+        "sql_type": "tinyint",
+        "spark_type": "TINYINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PreferredVendorStatus",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ActiveFlag",
+        "sql_type": "bit",
+        "spark_type": "BOOLEAN",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "PurchasingWebServiceURL",
+        "sql_type": "nvarchar(1024)",
+        "spark_type": "STRING",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "WorkOrder": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "WorkOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OrderQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StockedQty",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": true,
+        "expression": "ISNULL([OrderQty] - [ScrappedQty], 0)"
+      },
+      {
+        "name": "ScrappedQty",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "StartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "EndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "DueDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ScrapReasonID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  },
+  "WorkOrderRouting": {
+    "source_schema": "Production",
+    "columns": [
+      {
+        "name": "WorkOrderID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ProductID",
+        "sql_type": "int",
+        "spark_type": "INT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "OperationSequence",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "LocationID",
+        "sql_type": "smallint",
+        "spark_type": "SMALLINT",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ScheduledStartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ScheduledEndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ActualStartDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ActualEndDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ActualResourceHrs",
+        "sql_type": "decimal(9, 4)",
+        "spark_type": "DECIMAL(9,4)",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "PlannedCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": false,
+        "computed": false
+      },
+      {
+        "name": "ActualCost",
+        "sql_type": "money",
+        "spark_type": "DECIMAL(19,4)",
+        "nullable": true,
+        "computed": false
+      },
+      {
+        "name": "ModifiedDate",
+        "sql_type": "datetime",
+        "spark_type": "TIMESTAMP",
+        "nullable": false,
+        "computed": false
+      }
+    ]
+  }
+}

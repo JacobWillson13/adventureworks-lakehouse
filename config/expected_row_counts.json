@@ -1,0 +1,23 @@
+{
+  "_note": "Logical record counts per source file, from scripts/profile_raw.py. ProductReview is 4 records across 34 physical lines.",
+  "Address": 19614, "AddressType": 6, "AWBuildVersion": 1, "BillOfMaterials": 2679,
+  "BusinessEntity": 20777, "BusinessEntityAddress": 19614, "BusinessEntityContact": 909,
+  "ContactType": 20, "CountryRegion": 238, "CountryRegionCurrency": 109, "CreditCard": 19118,
+  "Culture": 8, "Currency": 105, "CurrencyRate": 13532, "Customer": 19820, "Department": 16,
+  "Document": 13, "EmailAddress": 19972, "Employee": 290, "EmployeeDepartmentHistory": 296,
+  "EmployeePayHistory": 316, "ErrorLog": 0, "Illustration": 5, "JobCandidate": 13,
+  "Location": 14, "Password": 19972, "Person": 19972, "PersonCreditCard": 19118,
+  "PersonPhone": 19972, "PhoneNumberType": 3, "Product": 504, "ProductCategory": 4,
+  "ProductCostHistory": 395, "ProductDescription": 762, "ProductDocument": 32,
+  "ProductInventory": 1069, "ProductListPriceHistory": 395, "ProductModel": 128,
+  "ProductModelIllustration": 7, "ProductModelProductDescriptionCulture": 762,
+  "ProductModelorg": 128, "ProductPhoto": 101, "ProductProductPhoto": 504, "ProductReview": 4,
+  "ProductSubcategory": 37, "ProductVendor": 460, "PurchaseOrderDetail": 8845,
+  "PurchaseOrderHeader": 4012, "SalesOrderDetail": 121317, "SalesOrderHeader": 31465,
+  "SalesOrderHeaderSalesReason": 27647, "SalesPerson": 17, "SalesPersonQuotaHistory": 163,
+  "SalesReason": 10, "SalesTaxRate": 29, "SalesTerritory": 10, "SalesTerritoryHistory": 17,
+  "ScrapReason": 16, "Shift": 3, "ShipMethod": 5, "ShoppingCartItem": 3, "SpecialOffer": 16,
+  "SpecialOfferProduct": 538, "StateProvince": 181, "Store": 701, "TransactionHistory": 113443,
+  "TransactionHistoryArchive": 89253, "UnitMeasure": 38, "Vendor": 104, "WorkOrder": 72591,
+  "WorkOrderRouting": 67131
+}
