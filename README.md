@@ -93,6 +93,7 @@ pip install -r requirements.txt
 python -m pytest -q                        # unit + local Spark tests
 python scripts/profile_raw.py              # structural check of every raw file
 python scripts/bronze_dryrun.py            # full bronze read locally, row counts checked
+python scripts/silver_dryrun.py            # silver pipeline code locally, expectation violations counted
 
 databricks auth login --host https://<workspace>.cloud.databricks.com --profile DEFAULT
 databricks bundle validate
