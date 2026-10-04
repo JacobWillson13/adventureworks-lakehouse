@@ -11,13 +11,12 @@ Last updated: 2026-10-04. Milestones, done-when criteria and settled decisions l
 - **M1 Databricks foundation: done.** Bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded.
 - **M2 Silver pipeline: done.** 16 materialized views in `aw_silver` (Lakeflow Declarative Pipeline), all expectations pass.
 - **M3 Gold (dbt): in progress.** dbt project scaffolded (16 staging views), `dim_customer`, `dim_product`,
-  `dim_territory`, `dim_date` and `fct_sales_lines` with tests. `fct_orders` is next.
+  `dim_territory`, `dim_date`, `fct_sales_lines` and `fct_orders` with tests. Waiting on a green `gold_dbt` run.
 
 ### Next
 
-1. `fct_orders` and its tests (guide: [docs/M3_fct_orders.md](docs/M3_fct_orders.md))
-2. `gold_dbt` task green in the `aw_medallion` job on Databricks
-3. M4: analysis on gold
+1. `gold_dbt` task green in the `aw_medallion` job on Databricks with `fct_orders`
+2. M4 and M5: analysis on gold and extensions
 
 ### Open questions
 
