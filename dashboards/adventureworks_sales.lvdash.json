@@ -148,7 +148,7 @@
         "select vendor_name, sum(rejected_qty) / nullif(sum(received_qty), 0) as rejection_rate\n",
         "from workspace.aw_gold.mart_vendor_quality\n",
         "group by vendor_name\n",
-        "having sum(rejected_qty) > 0\n",
+        "having sum(rejected_qty) > 0 and sum(received_qty) >= 1000\n",
         "order by rejection_rate desc\n",
         "limit 10"
       ]
@@ -672,7 +672,7 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 1
+            "height": 2
           },
           "widget": {
             "name": "margin-note",
@@ -687,7 +687,7 @@
         {
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -741,7 +741,7 @@
         {
           "position": {
             "x": 3,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -795,7 +795,7 @@
         {
           "position": {
             "x": 6,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -849,7 +849,7 @@
         {
           "position": {
             "x": 9,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -901,7 +901,7 @@
         {
           "position": {
             "x": 0,
-            "y": 3,
+            "y": 4,
             "width": 12,
             "height": 6
           },
@@ -979,7 +979,7 @@
         {
           "position": {
             "x": 0,
-            "y": 9,
+            "y": 10,
             "width": 12,
             "height": 6
           },
@@ -1069,7 +1069,7 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 1
+            "height": 2
           },
           "widget": {
             "name": "customers-note",
@@ -1084,7 +1084,7 @@
         {
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1137,7 +1137,7 @@
         {
           "position": {
             "x": 3,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1189,7 +1189,7 @@
         {
           "position": {
             "x": 6,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1243,7 +1243,7 @@
         {
           "position": {
             "x": 9,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1288,7 +1288,7 @@
         {
           "position": {
             "x": 0,
-            "y": 3,
+            "y": 4,
             "width": 12,
             "height": 6
           },
@@ -1348,7 +1348,7 @@
         {
           "position": {
             "x": 0,
-            "y": 9,
+            "y": 10,
             "width": 5,
             "height": 6
           },
@@ -1408,7 +1408,7 @@
         {
           "position": {
             "x": 5,
-            "y": 9,
+            "y": 10,
             "width": 7,
             "height": 6
           },
@@ -1487,7 +1487,7 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 1
+            "height": 2
           },
           "widget": {
             "name": "suppliers-note",
@@ -1502,7 +1502,7 @@
         {
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1556,7 +1556,7 @@
         {
           "position": {
             "x": 3,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1601,7 +1601,7 @@
         {
           "position": {
             "x": 6,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1654,7 +1654,7 @@
         {
           "position": {
             "x": 9,
-            "y": 1,
+            "y": 2,
             "width": 3,
             "height": 2
           },
@@ -1706,7 +1706,7 @@
         {
           "position": {
             "x": 0,
-            "y": 3,
+            "y": 4,
             "width": 12,
             "height": 6
           },
@@ -1773,7 +1773,7 @@
         {
           "position": {
             "x": 0,
-            "y": 9,
+            "y": 10,
             "width": 12,
             "height": 6
           },
@@ -1850,7 +1850,7 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 1
+            "height": 2
           },
           "widget": {
             "name": "demand-note",
@@ -1865,7 +1865,7 @@
         {
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 2,
             "width": 12,
             "height": 6
           },
@@ -1936,7 +1936,7 @@
         {
           "position": {
             "x": 0,
-            "y": 7,
+            "y": 8,
             "width": 7,
             "height": 6
           },
@@ -2007,7 +2007,7 @@
         {
           "position": {
             "x": 7,
-            "y": 7,
+            "y": 8,
             "width": 5,
             "height": 6
           },
