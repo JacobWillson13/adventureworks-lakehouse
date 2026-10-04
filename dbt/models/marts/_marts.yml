@@ -1,0 +1,106 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: >
+      Calendar, one row per day from calendar_start_date to calendar_end_date (2011-01-01 to 2014-12-31).
+      is_in_analysis_window marks days up to analysis_end_date (2014-05-31); June 2014 is a truncated extract.
+    columns:
+      - name: date_key
+        description: Primary key, yyyymmdd as an integer. Facts join on it.
+        data_tests: [unique, not_null]
+      - name: date_day
+        description: The calendar date.
+        data_tests: [unique, not_null]
+      - name: day_of_week
+        description: 1 = Monday ... 7 = Sunday.
+      - name: is_in_analysis_window
+        description: True up to and including analysis_end_date.
+
+  - name: dim_territory
+    description: One row per sales territory.
+    columns:
+      - name: territory_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: territory_group
+        description: North America, Europe or Pacific.
+
+  - name: dim_product
+    description: One row per product, with subcategory and category (NULL for component-only products).
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: category_name
+        description: Bikes, Components, Clothing or Accessories.
+
+  - name: dim_customer
+    description: >
+      One row per customer. customer_type is 'store' when store_id is set (reseller; person_id is then
+      the store contact) and 'individual' when there is no store and person_type = 'IN'.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: customer_type
+        description: store or individual.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["store", "individual"]
+      - name: customer_name
+        description: Store name for stores, first and last name for individuals.
+      - name: territory_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_territory')
+                field: territory_id
+
+  - name: fct_sales_lines
+    description: >
+      One row per order line. revenue = line_total; the lines of an order sum to its sub_total
+      (see tests/assert_sales_lines_reconcile_to_order_subtotal.sql). Holds every order, including
+      the truncated June 2014; join dim_date and filter on is_in_analysis_window for analysis.
+    columns:
+      - name: sales_order_detail_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: sales_order_id
+        description: The order this line belongs to.
+        data_tests: [not_null]
+      - name: order_date_key
+        description: Order date as yyyymmdd. Foreign key to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: territory_id
+        description: Territory on the order header.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_territory')
+                field: territory_id
+      - name: revenue
+        description: Line revenue = line_total.
+        data_tests: [not_null]

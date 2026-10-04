@@ -73,8 +73,8 @@ scripts/       schema builder, raw profiler, local bronze dry run, volume upload
 src/awlake/    shared Python used by notebooks and tests
 src/00_setup/  schemas + landing volume
 src/01_bronze/ raw files -> Delta, all STRING, with lineage columns
-src/02_silver/ typed and conformed tables            (next)
-src/03_gold/   sales star schema and marts            (next)
+src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline)
+dbt/           gold: staging views, star schema (dims + facts) and tests
 resources/     Databricks job definitions (Asset Bundle)
 tests/         pytest, incl. local Spark tests of each raw-format quirk
 ```
