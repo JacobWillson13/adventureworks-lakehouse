@@ -104,3 +104,59 @@ models:
       - name: revenue
         description: Line revenue = line_total.
         data_tests: [not_null]
+
+  - name: fct_orders
+    description: >
+      One row per sales order. revenue = sub_total (excludes tax and freight); tax_amt, freight and
+      total_due are kept for reconciliation to the billed amount. line_count and units are aggregated from
+      the order lines before the join, so the grain never fans out. Holds every order, including the
+      truncated June 2014; join dim_date and filter on is_in_analysis_window for analysis.
+      Order revenue reconciles to fct_sales_lines (tests/assert_orders_reconcile_to_sales_lines.sql) and
+      channel matches customer type (tests/assert_order_channel_matches_customer_type.sql).
+    columns:
+      - name: sales_order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: sales_order_number
+        description: Business key, e.g. SO43659.
+      - name: order_date_key
+        description: Order date as yyyymmdd. Foreign key to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: territory_id
+        description: Territory on the order header.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_territory')
+                field: territory_id
+      - name: sales_person_id
+        description: Sales rep. NULL for online orders.
+      - name: channel
+        description: online (individual customers) or reseller (stores), from online_order_flag.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["online", "reseller"]
+      - name: revenue
+        description: Order revenue = sub_total.
+        data_tests: [not_null]
+      - name: total_due
+        description: sub_total + tax_amt + freight, as billed.
+      - name: line_count
+        description: Number of order lines; 0 if the order has none (the reconciliation test flags that).
+      - name: units
+        description: Sum of order_qty over the order's lines.
