@@ -42,7 +42,8 @@ and freight.
   has a WAPE of 49.0% against 49.4% for the naive forecast. Forecasting online and reseller separately is worse
   (53.8%). With monthly reseller batches, demand at this grain is mostly noise; the honest result is the baseline.
 - **Margin.** Cost history is joined to each order line by effective date. Monthly gross margin ranges from
-  -21.4% (April 2012, a Mountain-100 clearance) to +41.5%. Reseller margin is close to zero overall (0.6%).
+  -21.4% (April 2012, a Mountain-100 clearance) to +41.5%. Reseller margin is close to zero overall (0.6%). Online sells at
+  about 40%; resellers lose money on bikes, and components are their only clearly profitable category.
 - **Supplier quality.** All purchase orders (2011-04 to 2014-09). The worst vendors reject about 5% of received
   units, mostly as whole deliveries refused rather than partial rejections. Lead time cannot be measured: there
   is no receipt date and due date = order date + 14 days on 99.4% of lines.
@@ -53,6 +54,28 @@ and freight.
 | ![Forecast backtest](reports/figures/forecast_backtest_wape.png) | ![Margin over time](reports/figures/margin_over_time.png) |
 
 All figures: [reports/figures](reports/figures).
+
+## Screenshots
+
+The pipeline as it runs on Databricks (Free Edition), and the dbt lineage of the gold layer.
+
+![Dashboard overview](docs/images/dashboard_overview.png)
+
+![dbt lineage](docs/images/dbt_lineage.png)
+
+<details>
+<summary>More: job run, silver pipeline, MLflow, other dashboard pages</summary>
+
+![dbt lineage: margin by effective-date cost join](docs/images/dbt_lineage_margin.png)
+![aw_medallion job run](docs/images/job_run.png)
+![Silver pipeline with expectations](docs/images/silver_pipeline.png)
+![MLflow experiment](docs/images/mlflow_runs.png)
+![Dashboard: margin](docs/images/dashboard_margin.png)
+![Dashboard: customers](docs/images/dashboard_customers.png)
+![Dashboard: suppliers](docs/images/dashboard_suppliers.png)
+![Dashboard: demand](docs/images/dashboard_demand.png)
+
+</details>
 
 ## Evidence
 

@@ -148,7 +148,7 @@
         "select vendor_name, sum(rejected_qty) / nullif(sum(received_qty), 0) as rejection_rate\n",
         "from workspace.aw_gold.mart_vendor_quality\n",
         "group by vendor_name\n",
-        "having sum(rejected_qty) > 0\n",
+        "having sum(rejected_qty) > 0 and sum(received_qty) >= 1000\n",
         "order by rejection_rate desc\n",
         "limit 10"
       ]
@@ -197,7 +197,7 @@
             "height": 2,
             "width": 3,
             "x": 0,
-            "y": 0
+            "y": 1
           },
           "widget": {
             "name": "revenue",
@@ -495,7 +495,7 @@
             "height": 2,
             "width": 3,
             "x": 3,
-            "y": 0
+            "y": 1
           },
           "widget": {
             "name": "337cc295",
@@ -540,7 +540,7 @@
             "height": 2,
             "width": 3,
             "x": 6,
-            "y": 0
+            "y": 1
           },
           "widget": {
             "name": "748e3410",
@@ -594,7 +594,7 @@
             "height": 2,
             "width": 3,
             "x": 9,
-            "y": 0
+            "y": 1
           },
           "widget": {
             "name": "f9827e99",
@@ -647,12 +647,12 @@
             "height": 1,
             "width": 12,
             "x": 0,
-            "y": 2
+            "y": 0
           },
           "widget": {
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Analysis window: 2011-05-31 to 2014-05-31. June 2014 excluded. Revenue = SubTotal, excludes tax and freight.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">Analysis window: 2011-05-31 to 2014-05-31. June 2014 excluded. Revenue = SubTotal, excludes tax and freight.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
             },
@@ -669,27 +669,27 @@
       "layout": [
         {
           "position": {
-            "x": 0,
-            "y": 0,
+            "height": 1,
             "width": 12,
-            "height": 1
+            "x": 0,
+            "y": 0
           },
           "widget": {
-            "name": "margin-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Gross margin = revenue minus units x standard cost on the order date (cost history joined by effective date). 64 reseller lines of discontinued products carry their last known cost forward.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">Gross margin = revenue minus units x standard cost on the order date (cost joined by effective date).</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
-            }
+            },
+            "name": "margin-note"
           }
         },
         {
           "position": {
-            "x": 0,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 0,
+            "y": 1
           },
           "widget": {
             "name": "margin-revenue",
@@ -740,10 +740,10 @@
         },
         {
           "position": {
-            "x": 3,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 3,
+            "y": 1
           },
           "widget": {
             "name": "margin-cost",
@@ -794,10 +794,10 @@
         },
         {
           "position": {
-            "x": 6,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 6,
+            "y": 1
           },
           "widget": {
             "name": "margin-gross",
@@ -848,10 +848,10 @@
         },
         {
           "position": {
-            "x": 9,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 9,
+            "y": 1
           },
           "widget": {
             "name": "margin-pct",
@@ -900,10 +900,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 3,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 3
           },
           "widget": {
             "name": "margin-pct-monthly",
@@ -935,33 +935,33 @@
                 "queryName": "main_query"
               },
               "encodings": {
+                "color": {
+                  "displayName": "Channel",
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
                 "x": {
+                  "displayName": "Month",
                   "fieldName": "monthly(month_start_date)",
                   "scale": {
                     "type": "temporal"
-                  },
-                  "displayName": "Month"
+                  }
                 },
                 "y": {
-                  "fieldName": "sum(margin_pct)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
                   "displayName": "Margin %",
+                  "fieldName": "sum(margin_pct)",
                   "format": {
                     "decimalPlaces": {
                       "places": 1,
                       "type": "max"
                     },
                     "type": "number-percent"
-                  }
-                },
-                "color": {
-                  "fieldName": "channel",
-                  "scale": {
-                    "type": "categorical"
                   },
-                  "displayName": "Channel"
+                  "scale": {
+                    "type": "quantitative"
+                  }
                 }
               },
               "frame": {
@@ -978,10 +978,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 9,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 9
           },
           "widget": {
             "name": "margin-by-category",
@@ -1013,19 +1013,23 @@
                 "queryName": "main_query"
               },
               "encodings": {
+                "color": {
+                  "displayName": "Channel",
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
                 "x": {
+                  "displayName": "Category",
                   "fieldName": "category_name",
                   "scale": {
                     "type": "categorical"
-                  },
-                  "displayName": "Category"
+                  }
                 },
                 "y": {
-                  "fieldName": "sum(gross_margin)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
                   "displayName": "Gross margin",
+                  "fieldName": "sum(gross_margin)",
                   "format": {
                     "abbreviation": "compact",
                     "currencyCode": "USD",
@@ -1034,14 +1038,10 @@
                       "type": "max"
                     },
                     "type": "number-currency"
-                  }
-                },
-                "color": {
-                  "fieldName": "channel",
-                  "scale": {
-                    "type": "categorical"
                   },
-                  "displayName": "Channel"
+                  "scale": {
+                    "type": "quantitative"
+                  }
                 }
               },
               "frame": {
@@ -1066,27 +1066,27 @@
       "layout": [
         {
           "position": {
-            "x": 0,
-            "y": 0,
+            "height": 1,
             "width": 12,
-            "height": 1
+            "x": 0,
+            "y": 0
           },
           "widget": {
-            "name": "customers-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Individuals (online) and reseller stores are separate populations; individuals are segmented with K-means (k = 3, tracked in MLflow), stores are profiled separately. Analysis window only.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">Analysis window only. Individuals (online) segmented with K-means, k = 3; reseller stores profiled separately.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
-            }
+            },
+            "name": "customers-note"
           }
         },
         {
           "position": {
-            "x": 0,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 0,
+            "y": 1
           },
           "widget": {
             "name": "cust-individuals",
@@ -1136,10 +1136,10 @@
         },
         {
           "position": {
-            "x": 3,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 3,
+            "y": 1
           },
           "widget": {
             "name": "cust-avg-orders",
@@ -1188,10 +1188,10 @@
         },
         {
           "position": {
-            "x": 6,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 6,
+            "y": 1
           },
           "widget": {
             "name": "cust-avg-revenue",
@@ -1242,10 +1242,10 @@
         },
         {
           "position": {
-            "x": 9,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 9,
+            "y": 1
           },
           "widget": {
             "name": "cust-stores",
@@ -1287,10 +1287,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 3,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 3
           },
           "widget": {
             "name": "cust-new-monthly",
@@ -1319,18 +1319,18 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Month",
                   "fieldName": "monthly(month_start_date)",
                   "scale": {
                     "type": "temporal"
-                  },
-                  "displayName": "Month"
+                  }
                 },
                 "y": {
+                  "displayName": "New customers",
                   "fieldName": "sum(new_customers)",
                   "scale": {
                     "type": "quantitative"
-                  },
-                  "displayName": "New customers"
+                  }
                 }
               },
               "frame": {
@@ -1347,10 +1347,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 9,
+            "height": 6,
             "width": 5,
-            "height": 6
+            "x": 0,
+            "y": 9
           },
           "widget": {
             "name": "cust-order-buckets",
@@ -1379,18 +1379,18 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Orders",
                   "fieldName": "orders_bucket",
                   "scale": {
                     "type": "categorical"
-                  },
-                  "displayName": "Orders"
+                  }
                 },
                 "y": {
+                  "displayName": "Customers",
                   "fieldName": "sum(customers)",
                   "scale": {
                     "type": "quantitative"
-                  },
-                  "displayName": "Customers"
+                  }
                 }
               },
               "frame": {
@@ -1407,10 +1407,10 @@
         },
         {
           "position": {
-            "x": 5,
-            "y": 9,
+            "height": 6,
             "width": 7,
-            "height": 6
+            "x": 5,
+            "y": 9
           },
           "widget": {
             "name": "cust-top-stores",
@@ -1439,18 +1439,18 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Store",
                   "fieldName": "store_name",
                   "scale": {
+                    "sort": {
+                      "by": "y-reversed"
+                    },
                     "type": "categorical"
-                  },
-                  "displayName": "Store"
+                  }
                 },
                 "y": {
-                  "fieldName": "sum(total_revenue)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
                   "displayName": "Revenue",
+                  "fieldName": "sum(total_revenue)",
                   "format": {
                     "abbreviation": "compact",
                     "currencyCode": "USD",
@@ -1459,6 +1459,9 @@
                       "type": "max"
                     },
                     "type": "number-currency"
+                  },
+                  "scale": {
+                    "type": "quantitative"
                   }
                 }
               },
@@ -1484,27 +1487,27 @@
       "layout": [
         {
           "position": {
-            "x": 0,
-            "y": 0,
+            "height": 1,
             "width": 12,
-            "height": 1
+            "x": 0,
+            "y": 0
           },
           "widget": {
-            "name": "suppliers-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">All purchase orders, 2011-04 to 2014-09 (not cut at the sales window). Rejection rate = rejected / received qty. Lead time is not measurable: no receipt dates, and due date = order date + 14 days on 99.4% of lines.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">All purchase orders, 2011-04 to 2014-09. Rejection rate = rejected / received units.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
-            }
+            },
+            "name": "suppliers-note"
           }
         },
         {
           "position": {
-            "x": 0,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 0,
+            "y": 1
           },
           "widget": {
             "name": "sup-value",
@@ -1555,10 +1558,10 @@
         },
         {
           "position": {
-            "x": 3,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 3,
+            "y": 1
           },
           "widget": {
             "name": "sup-vendors",
@@ -1600,10 +1603,10 @@
         },
         {
           "position": {
-            "x": 6,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 6,
+            "y": 1
           },
           "widget": {
             "name": "sup-rejected",
@@ -1653,10 +1656,10 @@
         },
         {
           "position": {
-            "x": 9,
-            "y": 1,
+            "height": 2,
             "width": 3,
-            "height": 2
+            "x": 9,
+            "y": 1
           },
           "widget": {
             "name": "sup-rate",
@@ -1705,10 +1708,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 3,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 3
           },
           "widget": {
             "name": "sup-rate-monthly",
@@ -1737,24 +1740,24 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Month",
                   "fieldName": "monthly(month_start_date)",
                   "scale": {
                     "type": "temporal"
-                  },
-                  "displayName": "Month"
+                  }
                 },
                 "y": {
-                  "fieldName": "sum(rejection_rate)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
                   "displayName": "Rejection rate",
+                  "fieldName": "sum(rejection_rate)",
                   "format": {
                     "decimalPlaces": {
                       "places": 1,
                       "type": "max"
                     },
                     "type": "number-percent"
+                  },
+                  "scale": {
+                    "type": "quantitative"
                   }
                 }
               },
@@ -1772,10 +1775,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 9,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 9
           },
           "widget": {
             "name": "sup-worst",
@@ -1804,24 +1807,27 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Vendor",
                   "fieldName": "vendor_name",
                   "scale": {
+                    "sort": {
+                      "by": "y-reversed"
+                    },
                     "type": "categorical"
-                  },
-                  "displayName": "Vendor"
+                  }
                 },
                 "y": {
-                  "fieldName": "sum(rejection_rate)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
                   "displayName": "Rejection rate",
+                  "fieldName": "sum(rejection_rate)",
                   "format": {
                     "decimalPlaces": {
                       "places": 1,
                       "type": "max"
                     },
                     "type": "number-percent"
+                  },
+                  "scale": {
+                    "type": "quantitative"
                   }
                 }
               },
@@ -1847,27 +1853,27 @@
       "layout": [
         {
           "position": {
-            "x": 0,
-            "y": 0,
+            "height": 1,
             "width": 12,
-            "height": 1
+            "x": 0,
+            "y": 0
           },
           "widget": {
-            "name": "demand-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Forecast target is monthly units per product. Backtest WAPE: ETS 49.0% vs naive 49.4%, so no model meaningfully beats naive; details and the logged model are in the MLflow experiment.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 18px;\">Forecast target: monthly units per product. Backtest WAPE: ETS 49.0% vs naive 49.4%; details in MLflow.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
-            }
+            },
+            "name": "demand-note"
           }
         },
         {
           "position": {
-            "x": 0,
-            "y": 1,
+            "height": 6,
             "width": 12,
-            "height": 6
+            "x": 0,
+            "y": 1
           },
           "widget": {
             "name": "demand-channel",
@@ -1899,26 +1905,26 @@
                 "queryName": "main_query"
               },
               "encodings": {
-                "x": {
-                  "fieldName": "monthly(month_start_date)",
-                  "scale": {
-                    "type": "temporal"
-                  },
-                  "displayName": "Month"
-                },
-                "y": {
-                  "fieldName": "sum(units)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "displayName": "Units"
-                },
                 "color": {
+                  "displayName": "Channel",
                   "fieldName": "channel",
                   "scale": {
                     "type": "categorical"
-                  },
-                  "displayName": "Channel"
+                  }
+                },
+                "x": {
+                  "displayName": "Month",
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "displayName": "Units",
+                  "fieldName": "sum(units)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
                 }
               },
               "frame": {
@@ -1935,10 +1941,10 @@
         },
         {
           "position": {
-            "x": 0,
-            "y": 7,
+            "height": 6,
             "width": 7,
-            "height": 6
+            "x": 0,
+            "y": 7
           },
           "widget": {
             "name": "demand-category",
@@ -1970,26 +1976,26 @@
                 "queryName": "main_query"
               },
               "encodings": {
-                "x": {
-                  "fieldName": "monthly(month_start_date)",
-                  "scale": {
-                    "type": "temporal"
-                  },
-                  "displayName": "Month"
-                },
-                "y": {
-                  "fieldName": "sum(units)",
-                  "scale": {
-                    "type": "quantitative"
-                  },
-                  "displayName": "Units"
-                },
                 "color": {
+                  "displayName": "Category",
                   "fieldName": "category_name",
                   "scale": {
                     "type": "categorical"
-                  },
-                  "displayName": "Category"
+                  }
+                },
+                "x": {
+                  "displayName": "Month",
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "displayName": "Units",
+                  "fieldName": "sum(units)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
                 }
               },
               "frame": {
@@ -2006,10 +2012,10 @@
         },
         {
           "position": {
-            "x": 7,
-            "y": 7,
+            "height": 6,
             "width": 5,
-            "height": 6
+            "x": 7,
+            "y": 7
           },
           "widget": {
             "name": "demand-top-products",
@@ -2038,18 +2044,21 @@
               },
               "encodings": {
                 "x": {
+                  "displayName": "Product",
                   "fieldName": "product_name",
                   "scale": {
+                    "sort": {
+                      "by": "y-reversed"
+                    },
                     "type": "categorical"
-                  },
-                  "displayName": "Product"
+                  }
                 },
                 "y": {
+                  "displayName": "Units",
                   "fieldName": "sum(units)",
                   "scale": {
                     "type": "quantitative"
-                  },
-                  "displayName": "Units"
+                  }
                 }
               },
               "frame": {
