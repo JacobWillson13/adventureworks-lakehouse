@@ -1,0 +1,4 @@
+method,ARI vs K-means,silhouette
+Gaussian mixture (all customers),0.708300796206805,0.32777592438052927
+"Agglomerative, Ward (5,000 sample)",0.9029084617986882,0.4592676440786032
+K-means (reference),1.0,0.43604476667914527
