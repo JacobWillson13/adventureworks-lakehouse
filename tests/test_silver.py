@@ -7,9 +7,9 @@ import pytest
 
 pyspark = pytest.importorskip("pyspark")
 
+from conftest import ROOT  # noqa: E402
 from pyspark.sql import functions as F  # noqa: E402
 
-from conftest import ROOT  # noqa: E402
 from awlake.bronze import add_lineage, read_source  # noqa: E402
 from awlake.config import Config, safe_column, to_snake  # noqa: E402
 from awlake.silver import LINEAGE, PERSON_NAME_COLUMNS, cast_column, is_skipped, typed_columns  # noqa: E402

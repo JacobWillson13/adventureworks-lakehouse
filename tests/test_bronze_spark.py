@@ -5,6 +5,7 @@ import pytest
 pyspark = pytest.importorskip("pyspark")
 
 from conftest import ROOT
+
 from awlake.bronze import read_source
 from awlake.config import Config
 

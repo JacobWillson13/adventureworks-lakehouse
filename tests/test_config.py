@@ -1,8 +1,7 @@
-import json
 
 import pytest
-
 from conftest import ROOT
+
 from awlake.config import Config, safe_column, to_snake
 
 cfg = Config(ROOT)

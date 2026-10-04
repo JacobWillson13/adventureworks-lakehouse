@@ -1,0 +1,15 @@
+# Lint config only; the project is not packaged. CI runs `ruff check .`.
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+extend-exclude = ["notebooks/00_local_prototype.ipynb", "dbt/target", "dbt/dbt_packages", ".lakehouse"]
+# Globals Databricks injects into notebooks.
+builtins = ["spark", "dbutils", "display"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# Notebooks put src/ on sys.path before importing awlake; the Spark tests skip before importing pyspark.
+"notebooks/*.py" = ["E402"]
+"tests/test_bronze_spark.py" = ["E402"]
