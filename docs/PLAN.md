@@ -48,7 +48,7 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 
 ## Known data facts (from profiling and the prototype)
 
-- 31,465 orders, 2011-05-31 to 2014-06-30; line totals reconcile exactly to SubTotal.
+- 31,465 orders, 2011-05-31 to 2014-06-30; line totals reconcile to SubTotal within 0.01 per order (lines carry 6 decimals, headers 4).
 - 121,317 order lines.
 - Customer table: 18,484 individuals + 1,336 store rows (635 stores with orders, 701 store-only rows with no
   person and no orders).
