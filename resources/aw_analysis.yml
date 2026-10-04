@@ -2,7 +2,7 @@ resources:
   # MLflow experiment for the clustering and forecasting runs. The job passes its ID to the notebooks,
   # so runs land here wherever the bundle is deployed (in development mode the CLI prefixes the name).
   experiments:
-    aw_analysis:
+    aw_analysis_experiment:
       name: /Workspace/Users/${workspace.current_user.userName}/aw_analysis
 
   jobs:
@@ -19,7 +19,7 @@ resources:
         - name: catalog
           default: ${var.catalog}
         - name: experiment_id
-          default: ${resources.experiments.aw_analysis.id}
+          default: ${resources.experiments.aw_analysis_experiment.id}
       tasks:
         - task_key: sales_exploration
           environment_key: analysis
