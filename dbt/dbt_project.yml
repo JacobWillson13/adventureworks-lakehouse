@@ -25,9 +25,10 @@ vars:
 models:
   aw_lakehouse:
     # Write model and column descriptions to Unity Catalog comments, so they show in Catalog Explorer.
+    # Off for the local Spark target, whose plain Hive tables cannot take column comments.
     +persist_docs:
-      relation: true
-      columns: true
+      relation: "{{ target.type != 'spark' }}"
+      columns: "{{ target.type != 'spark' }}"
     staging:
       +materialized: view
     marts:

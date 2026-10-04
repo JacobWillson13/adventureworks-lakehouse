@@ -14,3 +14,21 @@ aw_lakehouse:
       catalog: "{{ env_var('DBT_CATALOG', 'workspace') }}"
       schema: "{{ env_var('DBT_SCHEMA', 'aw_gold') }}"
       threads: 4
+
+    # Local Spark in this process (dbt-spark, `pip install "dbt-spark[session]"`), over the aw_silver tables
+    # written by `python scripts/silver_dryrun.py --write`. Same catalog location as awlake.local_spark;
+    # run from dbt/ so the relative paths resolve to <repo>/.lakehouse. No credentials needed.
+    local:
+      type: spark
+      method: session
+      host: localhost
+      schema: aw_gold
+      threads: 1
+      server_side_parameters:
+        spark.master: "local[*]"
+        spark.sql.warehouse.dir: "{{ env_var('AW_LOCAL_LAKEHOUSE', '../.lakehouse') }}/warehouse"
+        spark.hadoop.javax.jdo.option.ConnectionURL: "jdbc:derby:;databaseName={{ env_var('AW_LOCAL_LAKEHOUSE', '../.lakehouse') }}/metastore_db;create=true"
+        spark.driver.extraJavaOptions: "-Dderby.system.home={{ env_var('AW_LOCAL_LAKEHOUSE', '../.lakehouse') }}"
+        spark.sql.ansi.enabled: "true"
+        spark.sql.session.timeZone: "UTC"
+        spark.ui.enabled: "false"
