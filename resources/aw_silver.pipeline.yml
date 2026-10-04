@@ -14,5 +14,7 @@ resources:
       libraries:
         - file:
             path: ../src/02_silver/sales.py
+        - file:
+            path: ../src/02_silver/purchasing.py
       configuration:
         bronze_schema: ${var.catalog}.aw_bronze   # read in code via spark.conf.get("bronze_schema")

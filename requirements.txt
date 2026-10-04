@@ -10,3 +10,5 @@ seaborn
 jupyter
 duckdb
 dbt-databricks>=1.10,<2   # gold layer (dbt/); 1.10+ for the `arguments:` test syntax
+dbt-spark[session]>=1.10  # dbt build --target local on local Spark
+mlflow>=3.1               # tracking for the segmentation and forecasting notebooks

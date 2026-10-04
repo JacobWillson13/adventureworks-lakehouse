@@ -6,8 +6,8 @@ sources:
     # the same project works in any workspace without edits.
     schema: aw_silver
     description: >
-      Typed, snake_case sales-domain tables built by the aw_silver Lakeflow pipeline
-      (src/02_silver/sales.py). Row-level data quality is enforced there with expectations;
+      Typed, snake_case sales and purchasing tables built by the aw_silver Lakeflow pipeline
+      (src/02_silver/sales.py and purchasing.py). Row-level data quality is enforced there with expectations;
       cross-table checks are dbt tests in this project.
     tables:
       - name: sales_order_header
@@ -42,3 +42,11 @@ sources:
         description: Promotions and volume discounts. ID 1 = 'No Discount'.
       - name: special_offer_product
         description: Bridge between offers and the products they apply to.
+      - name: purchase_order_header
+        description: One row per purchase order to a vendor.
+      - name: purchase_order_detail
+        description: One row per purchase order line with ordered, received, rejected and stocked quantities.
+      - name: vendor
+        description: Vendors (suppliers).
+      - name: product_vendor
+        description: Which vendors supply which products, with declared average lead time.

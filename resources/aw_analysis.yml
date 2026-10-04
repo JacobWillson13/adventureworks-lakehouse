@@ -1,0 +1,54 @@
+resources:
+  # MLflow experiment for the clustering and forecasting runs. The job passes its ID to the notebooks,
+  # so runs land here wherever the bundle is deployed (in development mode the CLI prefixes the name).
+  experiments:
+    aw_analysis_experiment:
+      name: /Workspace/Users/${workspace.current_user.userName}/aw_analysis
+
+  jobs:
+    # Analyses on gold (M4) and extensions (M5). Run after aw_medallion has built gold:
+    #   databricks bundle run aw_analysis
+    # Notebook tasks on serverless take the job environment through environment_key (GA since Nov 2025;
+    # without it a serverless notebook task uses the notebook's own environment).
+    # Figures are written next to the notebooks' repo copy, in reports/figures under the bundle's files
+    # folder, and also logged to MLflow for segmentation and forecasting.
+    aw_analysis:
+      name: aw_analysis
+      max_concurrent_runs: 1
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: experiment_id
+          default: ${resources.experiments.aw_analysis_experiment.id}
+      tasks:
+        - task_key: sales_exploration
+          environment_key: analysis
+          notebook_task:
+            notebook_path: ../notebooks/10_sales_exploration.py
+        - task_key: customer_segmentation
+          environment_key: analysis
+          notebook_task:
+            notebook_path: ../notebooks/11_customer_segmentation.py
+        - task_key: forecasting
+          environment_key: analysis
+          notebook_task:
+            notebook_path: ../notebooks/12_forecasting.py
+        - task_key: margin
+          environment_key: analysis
+          notebook_task:
+            notebook_path: ../notebooks/13_margin.py
+        - task_key: supplier_quality
+          environment_key: analysis
+          notebook_task:
+            notebook_path: ../notebooks/14_supplier_quality.py
+
+      environments:
+        - environment_key: analysis
+          spec:
+            environment_version: "5"
+            dependencies:
+              - pandas<3            # PySpark does not fully support pandas 3 yet
+              - scikit-learn>=1.5
+              - statsmodels>=0.14
+              - mlflow>=3.1         # log_model(name=...) and logged models
+              - matplotlib>=3.8
