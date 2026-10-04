@@ -48,6 +48,144 @@
         "where d.is_in_analysis_window\n",
         "group by t.territory_group, t.territory_name, o.channel"
       ]
+    },
+    {
+      "displayName": "margin_kpis",
+      "name": "b6a02a34",
+      "queryLines": [
+        "-- margin_kpis\n",
+        "select sum(revenue) as revenue, sum(cost) as cost, sum(gross_margin) as gross_margin,\n",
+        "       sum(gross_margin) / sum(revenue) as margin_pct\n",
+        "from workspace.aw_gold.mart_margin_monthly"
+      ]
+    },
+    {
+      "displayName": "margin_monthly_by_channel",
+      "name": "69d8ec3c",
+      "queryLines": [
+        "-- margin_monthly_by_channel\n",
+        "select month_start_date, channel, sum(gross_margin) / nullif(sum(revenue), 0) as margin_pct, sum(gross_margin) as gross_margin\n",
+        "from workspace.aw_gold.mart_margin_monthly\n",
+        "group by month_start_date, channel"
+      ]
+    },
+    {
+      "displayName": "margin_by_category",
+      "name": "988f893f",
+      "queryLines": [
+        "-- margin_by_category\n",
+        "select category_name, channel, sum(gross_margin) as gross_margin\n",
+        "from workspace.aw_gold.mart_margin_monthly\n",
+        "group by category_name, channel"
+      ]
+    },
+    {
+      "displayName": "customer_kpis",
+      "name": "9ca5b158",
+      "queryLines": [
+        "-- customer_kpis\n",
+        "select count(*) as individuals, avg(n_orders) as avg_orders, avg(total_revenue) as avg_revenue,\n",
+        "       (select count(*) from workspace.aw_gold.mart_store_profile) as stores\n",
+        "from workspace.aw_gold.mart_customer_features"
+      ]
+    },
+    {
+      "displayName": "customers_by_order_count",
+      "name": "8083e89f",
+      "queryLines": [
+        "-- customers_by_order_count\n",
+        "select case when n_orders >= 5 then '5+' else cast(n_orders as string) end as orders_bucket, count(*) as customers\n",
+        "from workspace.aw_gold.mart_customer_features\n",
+        "group by 1"
+      ]
+    },
+    {
+      "displayName": "new_customers_monthly",
+      "name": "ec6470b5",
+      "queryLines": [
+        "-- new_customers_monthly\n",
+        "select cast(date_trunc('MONTH', first_order_date) as date) as month_start_date, count(*) as new_customers\n",
+        "from workspace.aw_gold.mart_customer_features\n",
+        "group by 1"
+      ]
+    },
+    {
+      "displayName": "top_stores",
+      "name": "b764528a",
+      "queryLines": [
+        "-- top_stores\n",
+        "select store_name, total_revenue\n",
+        "from workspace.aw_gold.mart_store_profile\n",
+        "order by total_revenue desc\n",
+        "limit 15"
+      ]
+    },
+    {
+      "displayName": "supplier_kpis",
+      "name": "e65ed0ee",
+      "queryLines": [
+        "-- supplier_kpis\n",
+        "select sum(purchase_value) as purchase_value, sum(received_qty) as received_qty, sum(rejected_qty) as rejected_qty,\n",
+        "       sum(rejected_qty) / sum(received_qty) as rejection_rate, count(distinct vendor_id) as vendors\n",
+        "from workspace.aw_gold.mart_vendor_quality"
+      ]
+    },
+    {
+      "displayName": "rejection_monthly",
+      "name": "6c5404de",
+      "queryLines": [
+        "-- rejection_monthly\n",
+        "select month_start_date, sum(rejected_qty) / nullif(sum(received_qty), 0) as rejection_rate\n",
+        "from workspace.aw_gold.mart_vendor_quality\n",
+        "group by month_start_date"
+      ]
+    },
+    {
+      "displayName": "worst_vendors",
+      "name": "e3e1d2d0",
+      "queryLines": [
+        "-- worst_vendors\n",
+        "select vendor_name, sum(rejected_qty) / nullif(sum(received_qty), 0) as rejection_rate\n",
+        "from workspace.aw_gold.mart_vendor_quality\n",
+        "group by vendor_name\n",
+        "having sum(rejected_qty) > 0\n",
+        "order by rejection_rate desc\n",
+        "limit 10"
+      ]
+    },
+    {
+      "displayName": "units_monthly_by_channel",
+      "name": "9a32bdd9",
+      "queryLines": [
+        "-- units_monthly_by_channel\n",
+        "select month_start_date, channel, units\n",
+        "from workspace.aw_gold.mart_channel_monthly\n",
+        "where month_start_date <= date'2014-05-01'"
+      ]
+    },
+    {
+      "displayName": "units_monthly_by_category",
+      "name": "569f89bc",
+      "queryLines": [
+        "-- units_monthly_by_category\n",
+        "select month_start_date, category_name, sum(units) as units\n",
+        "from workspace.aw_gold.mart_product_monthly\n",
+        "where month_start_date <= date'2014-05-01'\n",
+        "group by month_start_date, category_name"
+      ]
+    },
+    {
+      "displayName": "top_products_units",
+      "name": "14a432a1",
+      "queryLines": [
+        "-- top_products_units\n",
+        "select product_name, sum(units) as units\n",
+        "from workspace.aw_gold.mart_product_monthly\n",
+        "where month_start_date <= date'2014-05-01'\n",
+        "group by product_name\n",
+        "order by units desc\n",
+        "limit 10"
+      ]
     }
   ],
   "pages": [
@@ -524,6 +662,1411 @@
       ],
       "layoutVersion": "GRID_V1",
       "name": "d20e1dbc",
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "displayName": "Margin",
+      "layout": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          },
+          "widget": {
+            "name": "margin-note",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Gross margin = revenue minus units x standard cost on the order date (cost history joined by effective date). 64 reseller lines of discontinued products carry their last known cost forward.</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_TOP"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "margin-revenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b6a02a34",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`revenue`)",
+                      "name": "sum(revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(revenue)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Revenue"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "margin-cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b6a02a34",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`cost`)",
+                      "name": "sum(cost)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(cost)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Cost"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "margin-gross",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b6a02a34",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`gross_margin`)",
+                      "name": "sum(gross_margin)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(gross_margin)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Gross margin"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "margin-pct",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b6a02a34",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`margin_pct`)",
+                      "name": "sum(margin_pct)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(margin_pct)",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-percent"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Margin %"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "margin-pct-monthly",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "69d8ec3c",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`channel`",
+                      "name": "channel"
+                    },
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`margin_pct`)",
+                      "name": "sum(margin_pct)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Month"
+                },
+                "y": {
+                  "fieldName": "sum(margin_pct)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Margin %",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-percent"
+                  }
+                },
+                "color": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Channel"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Monthly margin % by channel"
+                }
+              },
+              "version": 3,
+              "widgetType": "line"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "margin-by-category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "988f893f",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`channel`",
+                      "name": "channel"
+                    },
+                    {
+                      "expression": "`category_name`",
+                      "name": "category_name"
+                    },
+                    {
+                      "expression": "SUM(`gross_margin`)",
+                      "name": "sum(gross_margin)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "category_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Category"
+                },
+                "y": {
+                  "fieldName": "sum(gross_margin)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Gross margin",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                },
+                "color": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Channel"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Gross margin by category and channel"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        }
+      ],
+      "layoutVersion": "GRID_V1",
+      "name": "2797575d",
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "displayName": "Customers",
+      "layout": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          },
+          "widget": {
+            "name": "customers-note",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Individuals (online) and reseller stores are separate populations; individuals are segmented with K-means (k = 3, tracked in MLflow), stores are profiled separately. Analysis window only.</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_TOP"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "cust-individuals",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9ca5b158",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`individuals`)",
+                      "name": "sum(individuals)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(individuals)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Individual customers"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "cust-avg-orders",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9ca5b158",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`avg_orders`)",
+                      "name": "sum(avg_orders)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(avg_orders)",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Avg orders per individual"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "cust-avg-revenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9ca5b158",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`avg_revenue`)",
+                      "name": "sum(avg_revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(avg_revenue)",
+                  "format": {
+                    "abbreviation": "none",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 2,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Avg revenue per individual"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "cust-stores",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9ca5b158",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`stores`)",
+                      "name": "sum(stores)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(stores)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Reseller stores"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "cust-new-monthly",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ec6470b5",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`new_customers`)",
+                      "name": "sum(new_customers)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Month"
+                },
+                "y": {
+                  "fieldName": "sum(new_customers)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "New customers"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "New individual customers per month"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 5,
+            "height": 6
+          },
+          "widget": {
+            "name": "cust-order-buckets",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "8083e89f",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`orders_bucket`",
+                      "name": "orders_bucket"
+                    },
+                    {
+                      "expression": "SUM(`customers`)",
+                      "name": "sum(customers)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "orders_bucket",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Orders"
+                },
+                "y": {
+                  "fieldName": "sum(customers)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Customers"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Individuals by number of orders"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 5,
+            "y": 9,
+            "width": 7,
+            "height": 6
+          },
+          "widget": {
+            "name": "cust-top-stores",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b764528a",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`store_name`",
+                      "name": "store_name"
+                    },
+                    {
+                      "expression": "SUM(`total_revenue`)",
+                      "name": "sum(total_revenue)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "store_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Store"
+                },
+                "y": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Revenue",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Top 15 reseller stores by revenue"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        }
+      ],
+      "layoutVersion": "GRID_V1",
+      "name": "0b8d0895",
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "displayName": "Suppliers",
+      "layout": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          },
+          "widget": {
+            "name": "suppliers-note",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">All purchase orders, 2011-04 to 2014-09 (not cut at the sales window). Rejection rate = rejected / received qty. Lead time is not measurable: no receipt dates, and due date = order date + 14 days on 99.4% of lines.</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_TOP"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "sup-value",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e65ed0ee",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`purchase_value`)",
+                      "name": "sum(purchase_value)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(purchase_value)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "currencyCode": "USD",
+                    "decimalPlaces": {
+                      "places": 0,
+                      "type": "max"
+                    },
+                    "type": "number-currency"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Purchase value"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "sup-vendors",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e65ed0ee",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`vendors`)",
+                      "name": "sum(vendors)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(vendors)"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Vendors"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "sup-rejected",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e65ed0ee",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`rejected_qty`)",
+                      "name": "sum(rejected_qty)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(rejected_qty)",
+                  "format": {
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-plain"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Units rejected"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          },
+          "widget": {
+            "name": "sup-rate",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e65ed0ee",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "SUM(`rejection_rate`)",
+                      "name": "sum(rejection_rate)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(rejection_rate)",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-percent"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Rejection rate"
+                }
+              },
+              "version": 2,
+              "widgetType": "counter"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "sup-rate-monthly",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6c5404de",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`rejection_rate`)",
+                      "name": "sum(rejection_rate)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Month"
+                },
+                "y": {
+                  "fieldName": "sum(rejection_rate)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Rejection rate",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-percent"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Monthly rejection rate"
+                }
+              },
+              "version": 3,
+              "widgetType": "line"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "sup-worst",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e3e1d2d0",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`vendor_name`",
+                      "name": "vendor_name"
+                    },
+                    {
+                      "expression": "SUM(`rejection_rate`)",
+                      "name": "sum(rejection_rate)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "vendor_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Vendor"
+                },
+                "y": {
+                  "fieldName": "sum(rejection_rate)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Rejection rate",
+                  "format": {
+                    "decimalPlaces": {
+                      "places": 1,
+                      "type": "max"
+                    },
+                    "type": "number-percent"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Top 10 vendors by rejection rate"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        }
+      ],
+      "layoutVersion": "GRID_V1",
+      "name": "34810b2f",
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "displayName": "Demand",
+      "layout": [
+        {
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 1
+          },
+          "widget": {
+            "name": "demand-note",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Forecast target is monthly units per product. Backtest WAPE: ETS 49.0% vs naive 49.4%, so no model meaningfully beats naive; details and the logged model are in the MLflow experiment.</span></span>"
+              ],
+              "verticalAlign": "VERTICAL_ALIGN_TOP"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 12,
+            "height": 6
+          },
+          "widget": {
+            "name": "demand-channel",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "9a32bdd9",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`channel`",
+                      "name": "channel"
+                    },
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`units`)",
+                      "name": "sum(units)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Month"
+                },
+                "y": {
+                  "fieldName": "sum(units)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Units"
+                },
+                "color": {
+                  "fieldName": "channel",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Channel"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Monthly units by channel (empty reseller months shown as 0)"
+                }
+              },
+              "version": 3,
+              "widgetType": "line"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 7,
+            "height": 6
+          },
+          "widget": {
+            "name": "demand-category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "569f89bc",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`category_name`",
+                      "name": "category_name"
+                    },
+                    {
+                      "expression": "DATE_TRUNC(\"MONTH\", `month_start_date`)",
+                      "name": "monthly(month_start_date)"
+                    },
+                    {
+                      "expression": "SUM(`units`)",
+                      "name": "sum(units)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(month_start_date)",
+                  "scale": {
+                    "type": "temporal"
+                  },
+                  "displayName": "Month"
+                },
+                "y": {
+                  "fieldName": "sum(units)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Units"
+                },
+                "color": {
+                  "fieldName": "category_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Category"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Monthly units by category"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        },
+        {
+          "position": {
+            "x": 7,
+            "y": 7,
+            "width": 5,
+            "height": 6
+          },
+          "widget": {
+            "name": "demand-top-products",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "14a432a1",
+                  "disaggregated": false,
+                  "fields": [
+                    {
+                      "expression": "`product_name`",
+                      "name": "product_name"
+                    },
+                    {
+                      "expression": "SUM(`units`)",
+                      "name": "sum(units)"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "data": {
+                "queryName": "main_query"
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "product_name",
+                  "scale": {
+                    "type": "categorical"
+                  },
+                  "displayName": "Product"
+                },
+                "y": {
+                  "fieldName": "sum(units)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Units"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "fields": [],
+                  "value": "Top 10 products by units"
+                }
+              },
+              "version": 3,
+              "widgetType": "bar"
+            }
+          }
+        }
+      ],
+      "layoutVersion": "GRID_V1",
+      "name": "9fc36888",
       "pageType": "PAGE_TYPE_CANVAS"
     }
   ],
