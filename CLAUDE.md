@@ -8,7 +8,6 @@ Read `docs/PLAN.md` first. It holds the architecture, settled decisions and mile
   and wait for agreement. Do not start building a different approach.
 - **Learning mode.** For each new layer (first silver table, first dbt model, first test, first effective-date
   join), explain the concept and let Jake write the first piece; review it. After that, template the rest.
-- **No coursework framing** anywhere in the repo (course names, problem numbers, assignment wording).
 - **Data never enters this repo.** `data/` is gitignored.
 - One branch and one pull request per milestone. Keep commits small and descriptive.
 
