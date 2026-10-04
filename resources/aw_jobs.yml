@@ -10,7 +10,7 @@ resources:
             base_parameters:
               catalog: ${var.catalog}
 
-    # Medallion pipeline: bronze (job task) -> silver (Lakeflow pipeline). dbt gold gets added next.
+    # Medallion pipeline: bronze (job task) -> silver (Lakeflow pipeline) -> gold (dbt).
     aw_medallion:
       name: aw_medallion
       max_concurrent_runs: 1
@@ -26,3 +26,34 @@ resources:
             - task_key: bronze
           pipeline_task:
             pipeline_id: ${resources.pipelines.aw_silver.id}
+
+        # Gold: dbt project in dbt/, run on a SQL warehouse.
+        # Field reference: the bundle JSON schema for jobs.DbtTask / jobs.Task in databricks/cli
+        # (bundle/schema/jsonschema.json) and its dbt-sql bundle template
+        # (libs/template/templates/dbt-sql/.../resources/{{.project_name}}.job.yml.tmpl):
+        #   - warehouse_id: "If provided, we automatically generate and provide the profile and connection
+        #     details to dbt", so dbt/profiles.yml (local runs only) is not used here, and
+        #     profiles_directory "can only be specified if no warehouse_id is specified".
+        #   - catalog / schema: only used together with warehouse_id; schema defaults to `default`.
+        #   - environment_key: "required for Python script, Python wheel and dbt tasks when using
+        #     serverless compute"; the environment installs dbt-databricks (the template does the same).
+        - task_key: gold_dbt
+          depends_on:
+            - task_key: silver
+          environment_key: dbt
+          dbt_task:
+            project_directory: ../dbt
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${var.catalog}
+            schema: aw_gold
+            commands:
+              - dbt build
+              - dbt docs generate
+
+      environments:
+        - environment_key: dbt
+          spec:
+            environment_version: "5"
+            dependencies:
+              # >= 1.10: the project uses the `arguments:` test syntax introduced in dbt-core 1.10.
+              - dbt-databricks>=1.10.0,<2.0.0

@@ -10,6 +10,10 @@ variables:
   catalog:
     description: Unity Catalog catalog that holds the aw_* schemas
     default: workspace
+  warehouse_id:
+    # No default on purpose: fill it in (see the dbt task in resources/aw_jobs.yml for where to find it),
+    # e.g. `default: 1234567890abcdef` here, or pass --var warehouse_id=... / export BUNDLE_VAR_warehouse_id.
+    description: ID of the SQL warehouse the dbt task runs on (serverless or pro)
 
 targets:
   dev:
