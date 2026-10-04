@@ -1,0 +1,34 @@
+# Gold layer: dbt project over the silver tables in ${catalog}.aw_silver.
+# Builds staging views and the star schema (dims and facts) into the target schema (aw_gold).
+name: aw_lakehouse
+version: "1.0.0"
+config-version: 2
+
+profile: aw_lakehouse
+
+model-paths: ["models"]
+test-paths: ["tests"]
+
+clean-targets:
+  - target
+  - dbt_packages
+  - logs
+
+vars:
+  # dim_date calendar: covers every order (2011-05-31 to 2014-06-30) in whole years.
+  calendar_start_date: "2011-01-01"
+  calendar_end_date: "2014-12-31"
+  # Analysis window: June 2014 is a truncated extract (docs/PLAN.md). Facts keep every order;
+  # dim_date flags the window so marts and analyses filter on one definition.
+  analysis_end_date: "2014-05-31"
+
+models:
+  aw_lakehouse:
+    # Write model and column descriptions to Unity Catalog comments, so they show in Catalog Explorer.
+    +persist_docs:
+      relation: true
+      columns: true
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

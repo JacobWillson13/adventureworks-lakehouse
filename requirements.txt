@@ -9,3 +9,4 @@ matplotlib
 seaborn
 jupyter
 duckdb
+dbt-databricks>=1.10,<2   # gold layer (dbt/); 1.10+ for the `arguments:` test syntax

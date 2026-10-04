@@ -1,0 +1,28 @@
+-- One row per sales order. Light renaming only; rowguid and bronze lineage columns are dropped.
+select
+    sales_order_id,
+    sales_order_number,
+    revision_number,
+    order_date,
+    due_date,
+    ship_date,
+    status,
+    online_order_flag,
+    purchase_order_number,
+    account_number,
+    customer_id,
+    sales_person_id,
+    territory_id,
+    bill_to_address_id,
+    ship_to_address_id,
+    ship_method_id,
+    credit_card_id,
+    credit_card_approval_code,
+    currency_rate_id,
+    sub_total,
+    tax_amt,
+    freight,
+    total_due,
+    comment,
+    modified_date
+from {{ source('aw_silver', 'sales_order_header') }}

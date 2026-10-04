@@ -1,6 +1,6 @@
 # data stays local; README documents where to get it
 data/
-models/
+/models/
 *.parquet
 *.duckdb
 *.duckdb.wal
