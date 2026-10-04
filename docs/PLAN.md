@@ -39,7 +39,7 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 
 | # | Milestone | Done when | Jake writes |
 |---|---|---|---|
-| M1 | Databricks foundation | bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 70 ok + 1 excluded | runs every command |
+| M1 | Databricks foundation | bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded | runs every command |
 | M2 | Silver pipeline | sales-domain tables (about 12) typed with expectations; other tables follow later | first silver table + its expectations |
 | M3 | Gold (dbt) | `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_orders`, `fct_sales_lines`, marts; reconciliation tests pass; docs generated | first staging model + `fct_orders` |
 | M4 | Analysis on gold | prototype analyses rebuilt on gold, runs in MLflow, figures in `reports/figures` | one analysis end to end |

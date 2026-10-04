@@ -18,7 +18,7 @@ Last updated: 2026-10-03
 - [x] Per-file ingestion fixes in `config/ingest_overrides.json`; expected row counts in `config/expected_row_counts.json`
 - [x] Bronze code: `src/awlake/` package, `src/00_setup/` and `src/01_bronze/` notebooks, bundle jobs in `resources/aw_jobs.yml`
 - [x] Tests: 22/22 passing locally (`python -m pytest -q`), incl. Spark tests of every raw-format quirk
-- [x] Local bronze dry run: **PASS**, 70 tables loaded with exact expected row counts, 1 file excluded
+- [x] Local bronze dry run: **PASS**, 71 tables loaded with exact expected row counts, 1 file excluded
 - [x] Local toolchain: Java 21, PySpark 4.2, Databricks CLI v1.19.0
 - [x] Databricks Free Edition auth saved as CLI profile `DEFAULT`
 
@@ -29,7 +29,7 @@ Last updated: 2026-10-03
    `sed -i 's/^pandas$/pandas<3/' requirements.txt && pip install "pandas<3"`
 3. `databricks bundle validate`. **First real check of `databricks.yml` and `resources/aw_jobs.yml`**; they have not been validated against the CLI yet
 4. `databricks bundle deploy` → `databricks bundle run aw_setup` → `scripts/upload_raw.sh` → `databricks bundle run aw_medallion`
-5. Check `workspace.aw_bronze.ingest_audit`: 70 rows `ok`, 1 `excluded`
+5. Check `workspace.aw_bronze.ingest_audit`: 71 rows `ok`, 1 `excluded`
 6. First git commit (nothing committed yet; data is gitignored)
 7. Silver layer (`src/02_silver/`):
    - cast columns to the target types in `aw_schema.json`; rename to snake_case
