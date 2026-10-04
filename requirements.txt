@@ -1,7 +1,7 @@
 # Local development. The Databricks CLI is a separate install (see README).
 pyspark>=4.0      # local tests + scripts/bronze_dryrun.py (needs Java 17+)
 pytest
-pandas
+pandas<3        # PySpark does not fully support pandas 3 yet
 numpy
 scikit-learn
 statsmodels
