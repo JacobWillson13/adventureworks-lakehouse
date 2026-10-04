@@ -21,8 +21,14 @@ Last updated: 2026-10-04. Milestones, done-when criteria and settled decisions l
 
 ### Open questions
 
-- Is `ProductModelorg.csv` identical to `ProductModel.csv`? Check with `cmp data/raw/ProductModel.csv data/raw/ProductModelorg.csv`
-- Catalog name assumed to be `workspace` (Free Edition default). If different, pass `--var catalog=<name>` to `bundle run` and `scripts/upload_raw.sh <name>`
+None open. Resolved:
+
+- **Is `ProductModelorg.csv` a copy of `ProductModel.csv`?** Yes, in content. `cmp` reports the files differ, but
+  both hold the same 128 rows with identical values. The only difference is encoding inside the XML columns:
+  `ProductModel.csv` writes line breaks as the two characters `\n`, while `ProductModelorg.csv` has real line
+  breaks inside quoted fields (6 `CatalogDescription` and 9 `Instructions` values). `product_model_org` stays in
+  bronze only. Neither it nor `product_model` is in silver; `ProductModel` is the copy to promote if an analysis
+  needs it.
 
 ## Raw data quirks handled in bronze
 
