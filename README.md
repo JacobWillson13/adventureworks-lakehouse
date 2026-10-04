@@ -9,14 +9,18 @@ schema, and analysis on top (revenue, customer segmentation, forecasting).
 Last updated: 2026-10-04. Milestones, done-when criteria and settled decisions live in [docs/PLAN.md](docs/PLAN.md).
 
 - **M1 Databricks foundation: done.** Bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded.
-- **M2 Silver pipeline: done.** 16 materialized views in `aw_silver` (Lakeflow Declarative Pipeline), all expectations pass.
-- **M3 Gold (dbt): in progress.** dbt project scaffolded (16 staging views), `dim_customer`, `dim_product`,
-  `dim_territory`, `dim_date`, `fct_sales_lines` and `fct_orders` with tests. Waiting on a green `gold_dbt` run.
+- **M2 Silver pipeline: done.** 16 materialized views in `aw_silver` (Lakeflow Declarative Pipeline), all expectations
+  pass. M5 adds 4 purchasing tables (`src/02_silver/purchasing.py`).
+- **M3 Gold (dbt): done.** `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_sales_lines` and
+  `fct_orders` with reconciliation and channel tests; `gold_dbt` green on Databricks (22 models, 77 tests).
+- **M4 Analysis on gold + M5 Extensions: in progress** (one branch and PR). Analysis marts, three analyses
+  (sales exploration, customer segmentation, forecasting) with MLflow tracking, the `aw_analysis` job; silver
+  purchasing tables, margin over time (cost by effective date) and supplier quality.
 
 ### Next
 
-1. `gold_dbt` task green in the `aw_medallion` job on Databricks with `fct_orders`
-2. M4 and M5: analysis on gold and extensions
+1. `aw_medallion` and `aw_analysis` green on Databricks with the M4 and M5 models and notebooks
+2. M6: presentation
 
 ### Open questions
 
@@ -56,8 +60,11 @@ scripts/       schema builder, raw profiler, local bronze dry run, volume upload
 src/awlake/    shared Python used by notebooks and tests
 src/00_setup/  schemas + landing volume
 src/01_bronze/ raw files -> Delta, all STRING, with lineage columns
-src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline)
-dbt/           gold: staging views, star schema (dims + facts) and tests
+src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline): sales.py, purchasing.py
+src/awlake/analysis/  analysis logic (sales, segmentation, forecasting, margin, supplier), plots, MLflow
+dbt/           gold: staging views, star schema (dims + facts), analysis marts and tests
+notebooks/     00 local prototype (record); 10 to 14 analyses on gold, run by the aw_analysis job
+reports/figures/  figures from the analysis notebooks
 resources/     Databricks job definitions (Asset Bundle)
 tests/         pytest, incl. local Spark tests of each raw-format quirk
 ```
@@ -85,6 +92,23 @@ databricks bundle deploy
 databricks bundle run aw_setup             # once: schemas + landing volume
 scripts/upload_raw.sh                      # data/raw -> /Volumes/workspace/aw_raw/landing
 databricks bundle run aw_medallion         # bronze -> silver -> gold_dbt
+databricks bundle run aw_analysis          # notebooks 10 to 14 on gold; MLflow experiment aw_analysis
+```
+
+### Everything locally (no workspace)
+
+Silver, gold and the analyses also run on local Spark, with a persistent catalog in `.lakehouse/` (gitignored).
+Needs `pip install "dbt-spark[session]"` (in `requirements.txt`). Run from the repo root, one command at a time:
+
+```bash
+python scripts/silver_dryrun.py --write                   # expectations report + local aw_silver tables
+cd dbt && dbt build --target local --profiles-dir . && cd ..   # gold on local Spark
+python notebooks/10_sales_exploration.py                  # each analysis notebook runs as a script
+python notebooks/11_customer_segmentation.py              # MLflow runs go to .lakehouse/mlflow.db
+python notebooks/12_forecasting.py
+python notebooks/13_margin.py
+python notebooks/14_supplier_quality.py
+mlflow ui --backend-store-uri sqlite:///.lakehouse/mlflow.db   # browse the runs
 ```
 
 The `gold_dbt` task runs on a SQL warehouse whose ID is the bundle variable `warehouse_id` (no default). Set it
