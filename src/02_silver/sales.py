@@ -105,7 +105,7 @@ def store():
 
 @dp.materialized_view(
     name="person",
-    comment="People: key and name columns only. Contact details and survey XML stay in bronze.",
+    comment="People: key, person_type and name columns only. Contact details and survey XML stay in bronze.",
 )
 @dp.expect_or_fail("pk_present", "business_entity_id IS NOT NULL")
 @dp.expect_or_drop("modified_date_parsed", "modified_date IS NOT NULL")

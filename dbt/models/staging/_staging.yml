@@ -1,0 +1,145 @@
+version: 2
+
+# Every staging model gets its primary key tested: unique + not_null on a single key, or not_null on each
+# part plus unique on the combination for the bridge and history tables (no packages needed for that).
+
+models:
+  - name: stg_sales_order_header
+    description: One row per sales order.
+    columns:
+      - name: sales_order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: sub_total
+        description: Sum of line totals. Revenue in this project (excludes tax and freight).
+      - name: online_order_flag
+        description: True for orders placed online by individual customers, false for reseller orders.
+
+  - name: stg_sales_order_detail
+    description: One row per order line.
+    columns:
+      - name: sales_order_detail_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: sales_order_id
+        description: >
+          Every line must have a header: fct_sales_lines inner-joins on it, so an orphan line would
+          silently drop out of revenue.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales_order_header')
+                field: sales_order_id
+      - name: line_total
+        description: unit_price * (1 - unit_price_discount) * order_qty.
+
+  - name: stg_sales_order_header_sales_reason
+    description: Bridge between orders and sales reasons.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', sales_order_id, sales_reason_id)"
+    columns:
+      - name: sales_order_id
+        data_tests: [not_null]
+      - name: sales_reason_id
+        data_tests: [not_null]
+
+  - name: stg_sales_reason
+    columns:
+      - name: sales_reason_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_customer
+    columns:
+      - name: customer_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_store
+    columns:
+      - name: store_id
+        description: Primary key (business_entity_id in the source).
+        data_tests: [unique, not_null]
+
+  - name: stg_person
+    columns:
+      - name: person_id
+        description: Primary key (business_entity_id in the source).
+        data_tests: [unique, not_null]
+      - name: person_type
+        description: IN individual customer, SC store contact, EM employee, SP sales person, VC vendor contact, GC general contact.
+
+  - name: stg_sales_person
+    columns:
+      - name: sales_person_id
+        description: Primary key (business_entity_id in the source).
+        data_tests: [unique, not_null]
+
+  - name: stg_sales_territory
+    columns:
+      - name: territory_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_product
+    columns:
+      - name: product_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_product_subcategory
+    columns:
+      - name: product_subcategory_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_product_category
+    columns:
+      - name: product_category_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_product_list_price_history
+    description: One row per product and price period.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', product_id, start_date)"
+    columns:
+      - name: product_id
+        data_tests: [not_null]
+      - name: start_date
+        data_tests: [not_null]
+
+  - name: stg_product_cost_history
+    description: One row per product and cost period.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', product_id, start_date)"
+    columns:
+      - name: product_id
+        data_tests: [not_null]
+      - name: start_date
+        data_tests: [not_null]
+
+  - name: stg_special_offer
+    columns:
+      - name: special_offer_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+
+  - name: stg_special_offer_product
+    description: Bridge between offers and products.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', special_offer_id, product_id)"
+    columns:
+      - name: special_offer_id
+        data_tests: [not_null]
+      - name: product_id
+        data_tests: [not_null]

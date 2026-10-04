@@ -4,47 +4,31 @@ End-to-end Databricks lakehouse on the Microsoft AdventureWorks database:
 a bronze/silver/gold medallion pipeline over all 72 source files, a sales star
 schema, and analysis on top (revenue, customer segmentation, forecasting).
 
-_Work in progress: bronze layer built and validated locally; first Databricks deploy pending._
-
 ## Project status
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04. Milestones, done-when criteria and settled decisions live in [docs/PLAN.md](docs/PLAN.md).
 
-### Done
+- **M1 Databricks foundation: done.** Bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded.
+- **M2 Silver pipeline: done.** 16 materialized views in `aw_silver` (Lakeflow Declarative Pipeline), all expectations pass.
+- **M3 Gold (dbt): in progress.** dbt project scaffolded (16 staging views), `dim_customer`, `dim_product`,
+  `dim_territory`, `dim_date` and `fct_sales_lines` with tests. `fct_orders` is next.
 
-- [x] Repo scaffolded; raw data in `data/raw/` (72 CSVs, gitignored)
-- [x] Raw profiling (`scripts/profile_raw.py`): 68/72 files clean, 4 anomalies diagnosed (see table below)
-- [x] Schema for all 71 DDL tables / 486 columns generated from Microsoft's `instawdb.sql` (`config/aw_schema.json`)
-- [x] Per-file ingestion fixes in `config/ingest_overrides.json`; expected row counts in `config/expected_row_counts.json`
-- [x] Bronze code: `src/awlake/` package, `src/00_setup/` and `src/01_bronze/` notebooks, bundle jobs in `resources/aw_jobs.yml`
-- [x] Tests: 22/22 passing locally (`python -m pytest -q`), incl. Spark tests of every raw-format quirk
-- [x] Local bronze dry run: **PASS**, 71 tables loaded with exact expected row counts, 1 file excluded
-- [x] Local toolchain: Java 21, PySpark 4.2, Databricks CLI v1.19.0
-- [x] Databricks Free Edition auth saved as CLI profile `DEFAULT`
+### Next
 
-### Next (in order)
-
-1. Confirm auth: `databricks auth profiles` (DEFAULT shows `Valid: YES`) and `databricks current-user me`
-2. Pin pandas below 3 (PySpark warns it does not fully support pandas 3):
-   `sed -i 's/^pandas$/pandas<3/' requirements.txt && pip install "pandas<3"`
-3. `databricks bundle validate`. **First real check of `databricks.yml` and `resources/aw_jobs.yml`**; they have not been validated against the CLI yet
-4. `databricks bundle deploy` → `databricks bundle run aw_setup` → `scripts/upload_raw.sh` → `databricks bundle run aw_medallion`
-5. Check `workspace.aw_bronze.ingest_audit`: 71 rows `ok`, 1 `excluded`
-6. First git commit (nothing committed yet; data is gitignored)
-7. Silver layer (`src/02_silver/`):
-   - cast columns to the target types in `aw_schema.json`; rename to snake_case
-   - parse 9-digit fractional-second timestamps; normalize `rowguid` (some tables wrap GUIDs in `{}`)
-   - parse XML columns (`Person.Demographics`, `Store.Demographics`, `JobCandidate.Resume`, `ProductModel.CatalogDescription`) into columns
-   - decide on `product_model_org`: compare to `product_model`, drop from silver if redundant
-   - data quality checks (keys unique, FKs resolve, no nulls in NOT NULL columns)
-8. Gold layer (`src/03_gold/`): `fact_sales`, `dim_customer`, `dim_product`, `dim_territory`, `dim_date`
-9. Analysis (`src/analysis/`): revenue by category, average order value by territory, monthly seasonality; customer segmentation (clustering); monthly forecast for top products. Then pick 2 or 3 extras (quota attainment, special-offer effectiveness, sales reasons, product affinity, scrap rates)
-10. Databricks dashboard (`dashboards/`), exported figures (`reports/figures/`), final README
+1. `fct_orders` and its tests (guide: [docs/M3_fct_orders.md](docs/M3_fct_orders.md))
+2. `gold_dbt` task green in the `aw_medallion` job on Databricks
+3. M4: analysis on gold
 
 ### Open questions
 
-- Is `ProductModelorg.csv` identical to `ProductModel.csv`? Check with `cmp data/raw/ProductModel.csv data/raw/ProductModelorg.csv`
-- Catalog name assumed to be `workspace` (Free Edition default). If different, pass `--var catalog=<name>` to `bundle run` and `scripts/upload_raw.sh <name>`
+None open. Resolved:
+
+- **Is `ProductModelorg.csv` a copy of `ProductModel.csv`?** Yes, in content. `cmp` reports the files differ, but
+  both hold the same 128 rows with identical values. The only difference is encoding inside the XML columns:
+  `ProductModel.csv` writes line breaks as the two characters `\n`, while `ProductModelorg.csv` has real line
+  breaks inside quoted fields (6 `CatalogDescription` and 9 `Instructions` values). `product_model_org` stays in
+  bronze only. Neither it nor `product_model` is in silver; `ProductModel` is the copy to promote if an analysis
+  needs it.
 
 ## Raw data quirks handled in bronze
 
@@ -73,8 +57,8 @@ scripts/       schema builder, raw profiler, local bronze dry run, volume upload
 src/awlake/    shared Python used by notebooks and tests
 src/00_setup/  schemas + landing volume
 src/01_bronze/ raw files -> Delta, all STRING, with lineage columns
-src/02_silver/ typed and conformed tables            (next)
-src/03_gold/   sales star schema and marts            (next)
+src/02_silver/ typed and conformed tables (Lakeflow Declarative Pipeline)
+dbt/           gold: staging views, star schema (dims + facts) and tests
 resources/     Databricks job definitions (Asset Bundle)
 tests/         pytest, incl. local Spark tests of each raw-format quirk
 ```
@@ -96,9 +80,35 @@ python scripts/bronze_dryrun.py            # full bronze read locally, row count
 python scripts/silver_dryrun.py            # silver pipeline code locally, expectation violations counted
 
 databricks auth login --host https://<workspace>.cloud.databricks.com --profile DEFAULT
+export BUNDLE_VAR_warehouse_id=<warehouse id>   # SQL warehouse for the gold_dbt task (see below)
 databricks bundle validate
 databricks bundle deploy
 databricks bundle run aw_setup             # once: schemas + landing volume
 scripts/upload_raw.sh                      # data/raw -> /Volumes/workspace/aw_raw/landing
-databricks bundle run aw_medallion
+databricks bundle run aw_medallion         # bronze -> silver -> gold_dbt
+```
+
+The `gold_dbt` task runs on a SQL warehouse whose ID is the bundle variable `warehouse_id` (no default). Set it
+with `export BUNDLE_VAR_warehouse_id=<id>` as above, or pass `--var warehouse_id=<id>` to each `bundle` command.
+To find it: **SQL Warehouses** in the sidebar, open the warehouse, **Connection details** tab. The HTTP path
+looks like `/sql/1.0/warehouses/<id>`; its last segment is the ID.
+
+### dbt locally
+
+Runs the gold models and tests from your machine against the same SQL warehouse. `dbt/profiles.yml` reads the
+connection from environment variables, so no credentials are stored in the repo:
+
+| Variable | Value |
+|---|---|
+| `DBT_HOST` | Server hostname from **Connection details**, without `https://` |
+| `DBT_HTTP_PATH` | HTTP path from **Connection details** |
+| `DBT_ACCESS_TOKEN` | Personal access token (**Settings > Developer > Access tokens**) |
+| `DBT_CATALOG`, `DBT_SCHEMA` | Optional; default `workspace` and `aw_gold` |
+
+```bash
+export DBT_HOST=<server hostname>
+export DBT_HTTP_PATH=<http path>
+read -s DBT_ACCESS_TOKEN && export DBT_ACCESS_TOKEN   # paste the token; not echoed or saved in history
+cd dbt && dbt build                        # staging views, dims, facts and all tests into workspace.aw_gold
+dbt docs generate && dbt docs serve        # browse model docs and lineage
 ```

@@ -1,0 +1,16 @@
+# Profile for running dbt from your own machine. No credentials live in this file: everything is read
+# from environment variables (see the PR description / README for how to set them).
+#
+# The aw_medallion job does not use this file: its dbt task sets warehouse_id, and Databricks then
+# generates the profile and connection itself.
+aw_lakehouse:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      host: "{{ env_var('DBT_HOST') }}"                  # e.g. dbc-1234abcd-5678.cloud.databricks.com (no https://)
+      http_path: "{{ env_var('DBT_HTTP_PATH') }}"        # e.g. /sql/1.0/warehouses/<warehouse id>
+      token: "{{ env_var('DBT_ACCESS_TOKEN') }}"         # personal access token
+      catalog: "{{ env_var('DBT_CATALOG', 'workspace') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'aw_gold') }}"
+      threads: 4

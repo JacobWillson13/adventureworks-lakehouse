@@ -1,0 +1,44 @@
+version: 2
+
+sources:
+  - name: aw_silver
+    # No `database:` here, so the catalog comes from the target (variable `catalog`, default `workspace`):
+    # the same project works in any workspace without edits.
+    schema: aw_silver
+    description: >
+      Typed, snake_case sales-domain tables built by the aw_silver Lakeflow pipeline
+      (src/02_silver/sales.py). Row-level data quality is enforced there with expectations;
+      cross-table checks are dbt tests in this project.
+    tables:
+      - name: sales_order_header
+        description: One row per sales order. Revenue = sub_total (excludes tax and freight).
+      - name: sales_order_detail
+        description: One row per order line. line_total sums to the header's sub_total.
+      - name: sales_order_header_sales_reason
+        description: Bridge between orders and the reasons customers gave (online orders only).
+      - name: sales_reason
+        description: Lookup of purchase reasons.
+      - name: customer
+        description: One row per customer; person_id set for individuals, store_id set for resellers.
+      - name: store
+        description: Reseller stores.
+      - name: person
+        description: People, key, person_type and name columns only.
+      - name: sales_person
+        description: Sales staff with quota, bonus and commission.
+      - name: sales_territory
+        description: Sales territories.
+      - name: product
+        description: Products with current list price and standard cost.
+      - name: product_subcategory
+        description: Product subcategories, each in one category.
+      - name: product_category
+        description: Product categories.
+      - name: product_list_price_history
+        description: List price per product over time; end_date NULL means current.
+      - name: product_cost_history
+        description: Standard cost per product over time; end_date NULL means current.
+      - name: special_offer
+        description: Promotions and volume discounts. ID 1 = 'No Discount'.
+      - name: special_offer_product
+        description: Bridge between offers and the products they apply to.
