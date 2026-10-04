@@ -80,9 +80,35 @@ python scripts/bronze_dryrun.py            # full bronze read locally, row count
 python scripts/silver_dryrun.py            # silver pipeline code locally, expectation violations counted
 
 databricks auth login --host https://<workspace>.cloud.databricks.com --profile DEFAULT
+export BUNDLE_VAR_warehouse_id=<warehouse id>   # SQL warehouse for the gold_dbt task (see below)
 databricks bundle validate
 databricks bundle deploy
 databricks bundle run aw_setup             # once: schemas + landing volume
 scripts/upload_raw.sh                      # data/raw -> /Volumes/workspace/aw_raw/landing
-databricks bundle run aw_medallion
+databricks bundle run aw_medallion         # bronze -> silver -> gold_dbt
+```
+
+The `gold_dbt` task runs on a SQL warehouse whose ID is the bundle variable `warehouse_id` (no default). Set it
+with `export BUNDLE_VAR_warehouse_id=<id>` as above, or pass `--var warehouse_id=<id>` to each `bundle` command.
+To find it: **SQL Warehouses** in the sidebar, open the warehouse, **Connection details** tab. The HTTP path
+looks like `/sql/1.0/warehouses/<id>`; its last segment is the ID.
+
+### dbt locally
+
+Runs the gold models and tests from your machine against the same SQL warehouse. `dbt/profiles.yml` reads the
+connection from environment variables, so no credentials are stored in the repo:
+
+| Variable | Value |
+|---|---|
+| `DBT_HOST` | Server hostname from **Connection details**, without `https://` |
+| `DBT_HTTP_PATH` | HTTP path from **Connection details** |
+| `DBT_ACCESS_TOKEN` | Personal access token (**Settings > Developer > Access tokens**) |
+| `DBT_CATALOG`, `DBT_SCHEMA` | Optional; default `workspace` and `aw_gold` |
+
+```bash
+export DBT_HOST=<server hostname>
+export DBT_HTTP_PATH=<http path>
+read -s DBT_ACCESS_TOKEN && export DBT_ACCESS_TOKEN   # paste the token; not echoed or saved in history
+cd dbt && dbt build                        # staging views, dims, facts and all tests into workspace.aw_gold
+dbt docs generate && dbt docs serve        # browse model docs and lineage
 ```
