@@ -672,13 +672,13 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 2
+            "height": 1
           },
           "widget": {
             "name": "margin-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Gross margin = revenue minus units x standard cost on the order date (cost history joined by effective date). 64 reseller lines of discontinued products carry their last known cost forward.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Gross margin = revenue minus units x standard cost on the order date (cost joined by effective date).</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
             }
@@ -687,7 +687,7 @@
         {
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -741,7 +741,7 @@
         {
           "position": {
             "x": 3,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -795,7 +795,7 @@
         {
           "position": {
             "x": 6,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -849,7 +849,7 @@
         {
           "position": {
             "x": 9,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -901,7 +901,7 @@
         {
           "position": {
             "x": 0,
-            "y": 4,
+            "y": 3,
             "width": 12,
             "height": 6
           },
@@ -979,7 +979,7 @@
         {
           "position": {
             "x": 0,
-            "y": 10,
+            "y": 9,
             "width": 12,
             "height": 6
           },
@@ -1069,13 +1069,13 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 2
+            "height": 1
           },
           "widget": {
             "name": "customers-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Individuals (online) and reseller stores are separate populations; individuals are segmented with K-means (k = 3, tracked in MLflow), stores are profiled separately. Analysis window only.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Analysis window only. Individuals (online) segmented with K-means, k = 3; reseller stores profiled separately.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
             }
@@ -1084,7 +1084,7 @@
         {
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1137,7 +1137,7 @@
         {
           "position": {
             "x": 3,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1189,7 +1189,7 @@
         {
           "position": {
             "x": 6,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1243,7 +1243,7 @@
         {
           "position": {
             "x": 9,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1288,7 +1288,7 @@
         {
           "position": {
             "x": 0,
-            "y": 4,
+            "y": 3,
             "width": 12,
             "height": 6
           },
@@ -1348,7 +1348,7 @@
         {
           "position": {
             "x": 0,
-            "y": 10,
+            "y": 9,
             "width": 5,
             "height": 6
           },
@@ -1408,7 +1408,7 @@
         {
           "position": {
             "x": 5,
-            "y": 10,
+            "y": 9,
             "width": 7,
             "height": 6
           },
@@ -1487,13 +1487,13 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 2
+            "height": 1
           },
           "widget": {
             "name": "suppliers-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">All purchase orders, 2011-04 to 2014-09 (not cut at the sales window). Rejection rate = rejected / received qty. Lead time is not measurable: no receipt dates, and due date = order date + 14 days on 99.4% of lines.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">All purchase orders, 2011-04 to 2014-09. Rejection rate = rejected / received units.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
             }
@@ -1502,7 +1502,7 @@
         {
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1556,7 +1556,7 @@
         {
           "position": {
             "x": 3,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1601,7 +1601,7 @@
         {
           "position": {
             "x": 6,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1654,7 +1654,7 @@
         {
           "position": {
             "x": 9,
-            "y": 2,
+            "y": 1,
             "width": 3,
             "height": 2
           },
@@ -1706,7 +1706,7 @@
         {
           "position": {
             "x": 0,
-            "y": 4,
+            "y": 3,
             "width": 12,
             "height": 6
           },
@@ -1773,7 +1773,7 @@
         {
           "position": {
             "x": 0,
-            "y": 10,
+            "y": 9,
             "width": 12,
             "height": 6
           },
@@ -1850,13 +1850,13 @@
             "x": 0,
             "y": 0,
             "width": 12,
-            "height": 2
+            "height": 1
           },
           "widget": {
             "name": "demand-note",
             "multilineTextboxSpec": {
               "lines": [
-                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Forecast target is monthly units per product. Backtest WAPE: ETS 49.0% vs naive 49.4%, so no model meaningfully beats naive; details and the logged model are in the MLflow experiment.</span></span>"
+                "<span style=\"text-align:center;display:block\"><span style=\"font-size: 14px;\">Forecast target: monthly units per product. Backtest WAPE: ETS 49.0% vs naive 49.4%; details in MLflow.</span></span>"
               ],
               "verticalAlign": "VERTICAL_ALIGN_TOP"
             }
@@ -1865,7 +1865,7 @@
         {
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 1,
             "width": 12,
             "height": 6
           },
@@ -1936,7 +1936,7 @@
         {
           "position": {
             "x": 0,
-            "y": 8,
+            "y": 7,
             "width": 7,
             "height": 6
           },
@@ -2007,7 +2007,7 @@
         {
           "position": {
             "x": 7,
-            "y": 8,
+            "y": 7,
             "width": 5,
             "height": 6
           },
