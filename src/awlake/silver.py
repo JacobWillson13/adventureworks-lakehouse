@@ -24,8 +24,8 @@ LINEAGE = ["_source_file", "_ingest_run_id", "_ingested_at"]
 # spatial types are photos, hierarchy paths and map points that nothing downstream uses.
 SKIPPED_SQL_TYPES = ("xml", "varbinary", "hierarchyid", "geography")
 
-# Person is promoted with its key and name columns only; contact details and survey XML stay in bronze.
-PERSON_NAME_COLUMNS = ["BusinessEntityID", "Title", "FirstName", "MiddleName", "LastName", "Suffix", "ModifiedDate"]
+# Person is promoted with its key, type and name columns only; contact details and survey XML stay in bronze.
+PERSON_NAME_COLUMNS = ["BusinessEntityID", "PersonType", "Title", "FirstName", "MiddleName", "LastName", "Suffix", "ModifiedDate"]
 
 
 @lru_cache(maxsize=1)
