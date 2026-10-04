@@ -1,0 +1,6 @@
+resources:
+  dashboards:
+    adventureworks_sales:
+      display_name: "AdventureWorks Sales"
+      warehouse_id: ${var.warehouse_id}
+      file_path: ../dashboards/adventureworks_sales.lvdash.json
