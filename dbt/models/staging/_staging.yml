@@ -143,3 +143,74 @@ models:
         data_tests: [not_null]
       - name: product_id
         data_tests: [not_null]
+
+  - name: stg_purchase_order_header
+    description: One row per purchase order to a vendor.
+    columns:
+      - name: purchase_order_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: vendor_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_vendor')
+                field: vendor_id
+      - name: status_name
+        description: pending, approved, rejected or complete (from status 1 to 4).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["pending", "approved", "rejected", "complete"]
+
+  - name: stg_purchase_order_detail
+    description: One row per purchase order line.
+    columns:
+      - name: purchase_order_detail_id
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: purchase_order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_purchase_order_header')
+                field: purchase_order_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_product')
+                field: product_id
+      - name: received_qty
+        data_tests: [not_null]
+      - name: rejected_qty
+        data_tests: [not_null]
+
+  - name: stg_vendor
+    columns:
+      - name: vendor_id
+        description: Primary key (business_entity_id in the source).
+        data_tests: [unique, not_null]
+
+  - name: stg_product_vendor
+    description: One row per product and vendor.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "concat_ws('|', product_id, vendor_id)"
+    columns:
+      - name: product_id
+        data_tests: [not_null]
+      - name: vendor_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_vendor')
+                field: vendor_id
+      - name: average_lead_time_days
+        description: Vendor's declared average lead time in days (the only lead time signal; see fct_purchase_lines).
