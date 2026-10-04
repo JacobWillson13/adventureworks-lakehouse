@@ -40,7 +40,7 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 | # | Milestone | Done when | Jake writes |
 |---|---|---|---|
 | M1 | Databricks foundation | bundle deployed, bronze job green, `aw_bronze.ingest_audit` = 71 ok + 1 excluded | runs every command |
-| M2 | Silver pipeline | sales-domain tables (about 12) typed with expectations; other tables follow later | first silver table + its expectations |
+| M2 | Silver pipeline | 16 sales-domain tables typed with expectations; other tables follow later | first silver table + its expectations |
 | M3 | Gold (dbt) | `dim_customer`, `dim_product`, `dim_territory`, `dim_date`, `fct_orders`, `fct_sales_lines`; reconciliation and channel tests pass; docs generated; `gold_dbt` task green on Databricks | `fct_orders` + its tests (staging was templated; Jake reads `stg_sales_order_header` and `sources.yml`) |
 | M4 | Analysis on gold | prototype analyses rebuilt on gold, runs in MLflow, figures in `reports/figures`; marts built as each analysis needs them (e.g. monthly product units, customer features) | one analysis end to end |
 | M5 | Extensions | margin (cost history joined by effective date), supplier quality | first effective-date join |
@@ -49,6 +49,9 @@ Why bronze is a job and not part of the pipeline: the raw export needs repairs A
 ## Known data facts (from profiling and the prototype)
 
 - 31,465 orders, 2011-05-31 to 2014-06-30; line totals reconcile exactly to SubTotal.
+- 121,317 order lines.
+- Customer table: 18,484 individuals + 1,336 store rows (635 stores with orders, 701 store-only rows with no
+  person and no orders).
 - Channels never overlap: 635 reseller stores (all offline), 18,484 individuals (all online).
 - July 2013 structural break: accessories and clothing launched online.
 - Reseller orders arrive in monthly batches; some months have none (e.g. Feb and Apr 2014).
