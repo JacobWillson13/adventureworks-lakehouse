@@ -81,6 +81,9 @@ with mlflow.start_run(run_name="customer_segmentation") as run:
     tracking.log_table(seg["profiles"], "tables/cluster_profiles.csv")
     tracking.log_table(tier_table, "tables/store_tiers.csv")
     tracking.log_figures(figs)
+    # Databricks serializes sklearn models with skops, which refuses types it has not audited. The pipeline's
+    # ColumnTransformer carries this sklearn-internal list type; it is our own fitted model, so trust it.
     mlflow.sklearn.log_model(seg["pipeline"], name="kmeans_pipeline",
-                             input_example=feat[segmentation.FEATURES].head(5).astype(float))
+                             input_example=feat[segmentation.FEATURES].head(5).astype(float),
+                             skops_trusted_types=["sklearn.compose._column_transformer._RemainderColsList"])
     print("MLflow run", run.info.run_id)
